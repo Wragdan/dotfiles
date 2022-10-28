@@ -8,6 +8,7 @@ local function telescope_buffer_dir()
 end
 
 local fb_actions = require "telescope".extensions.file_browser.actions
+local z_utils = require("telescope._extensions.zoxide.utils")
 
 telescope.setup {
   defaults = {
@@ -43,11 +44,30 @@ telescope.setup {
         },
       },
     },
+    zoxide = {
+      prompt_title = "[ Recent Directories ]",
+      mappings = {
+        default = {
+          after_action = function(selection)
+            print("Update to (" .. selection.z_score .. ") " .. selection.path)
+          end
+        },
+        ["<C-s>"] = {
+          before_action = function(selection) print("before C-s") end,
+          action = function(selection)
+            vim.cmd("edit " .. selection.path)
+          end
+        },
+        -- Opens the selected entry in a new split
+        ["<C-q>"] = { action = z_utils.create_basic_command("split") },
+      },
+    },
   },
 }
 
 telescope.load_extension("file_browser")
 telescope.load_extension('fzf')
+telescope.load_extension('zoxide')
 
 vim.keymap.set('n', 'ff',
   function()
@@ -83,3 +103,4 @@ vim.keymap.set("n", "sf", function()
     layout_config = { height = 40 }
   })
 end)
+vim.keymap.set('n', 'cd', require("telescope").extensions.zoxide.list)
