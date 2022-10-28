@@ -42,4 +42,5 @@ return require('packer').startup(function(use)
   use 'nvim-telescope/telescope-file-browser.nvim'
 
   use 'jvgrootveld/telescope-zoxide'
+  use 'cljoly/telescope-repo.nvim'
 end)

@@ -62,12 +62,23 @@ telescope.setup {
         ["<C-q>"] = { action = z_utils.create_basic_command("split") },
       },
     },
+    repo = {
+      list = {
+        fd_opts = {
+          "--no-ignore-vcs",
+        },
+        search_dirs = {
+          "~/projects",
+        },
+      },
+    },
   },
 }
 
 telescope.load_extension("file_browser")
 telescope.load_extension('fzf')
 telescope.load_extension('zoxide')
+telescope.load_extension("repo")
 
 vim.keymap.set('n', 'ff',
   function()
@@ -104,3 +115,4 @@ vim.keymap.set("n", "sf", function()
   })
 end)
 vim.keymap.set('n', 'cd', require("telescope").extensions.zoxide.list)
+vim.keymap.set('n', 'rr', require('telescope').extensions.repo.list)
