@@ -36,6 +36,7 @@ telescope.setup {
         },
         ["n"] = {
           -- your custom normal mode mappings
+          ["E"] = fb_actions.rename,
           ["N"] = fb_actions.create,
           ["h"] = fb_actions.goto_parent_dir,
           ["/"] = function()
@@ -68,7 +69,7 @@ telescope.setup {
           "--no-ignore-vcs",
         },
         search_dirs = {
-          "~/projects",
+          "~/Documents/Github",
         },
       },
     },
@@ -116,3 +117,4 @@ vim.keymap.set("n", "sf", function()
 end)
 vim.keymap.set('n', 'cd', require("telescope").extensions.zoxide.list)
 vim.keymap.set('n', 'rr', require('telescope').extensions.repo.list)
+vim.keymap.set('n', 're', require('telescope').extensions.repo.cached_list)
