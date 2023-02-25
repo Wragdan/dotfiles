@@ -69,7 +69,7 @@ telescope.setup {
           "--no-ignore-vcs",
         },
         search_dirs = {
-          "~/Documents/Github",
+          "~/projects",
         },
       },
     },
@@ -85,7 +85,7 @@ vim.keymap.set('n', 'ff',
   function()
     builtin.find_files({
       no_ignore = false,
-      hidden = true
+      hidden = true,
     })
   end)
 vim.keymap.set('n', 'fr', function()
