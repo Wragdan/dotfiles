@@ -1,0 +1,9 @@
+.DS_Store
+.idea
+*.log
+tmp/
+
+.zcompdump
+
+plugins/zsh-autosuggestions
+plugins/zsh-syntax-highlighting

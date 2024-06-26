@@ -1,0 +1,121 @@
+# vim: set ft=zsh:
+
+# sudo not required for some system commands
+for command in mount umount sv pacman updatedb su shutdown poweroff reboot ; do
+	alias $command="sudo $command"
+done; unset command
+
+# Check if main exists and use instead of master
+function git_main_branch() {
+  command git rev-parse --git-dir &>/dev/null || return
+  local ref
+  for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default}; do
+    if command git show-ref -q --verify $ref; then
+      echo ${ref:t}
+      return
+    fi
+  done
+  echo master
+}
+
+# Check for develop and similarly named branches
+function git_develop_branch() {
+  command git rev-parse --git-dir &>/dev/null || return
+  local branch
+  for branch in dev devel development; do
+    if command git show-ref -q --verify refs/heads/$branch; then
+      echo $branch
+      return
+    fi
+  done
+  echo develop
+}
+
+
+alias e=$EDITOR
+alias zshrc="$EDITOR $ZSH/.zshrc" 
+
+alias ls="eza"
+# alias cd="z"
+alias src="source ~/.config/zsh/.zshrc"
+alias c="bat"
+
+# git aliases
+alias g='git'
+alias ga='git add'
+alias gaa='git add --all'
+alias gb='git branch'
+alias gba='git branch --all'
+alias gbd='git branch --delete'
+alias gc='git commit --verbose'
+alias gc!='git commit --verbose --amend'
+alias gcn!='git commit --verbose --no-edit --amend'
+alias gcb='git checkout -b'
+alias gcf='git config --list'
+alias gcm='git checkout $(git_main_branch)'
+alias gcd='git checkout $(git_develop_branch)'
+alias gco='git checkout'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias glh='git pull origin $(git rev-parse --abbrev-ref HEAD)'
+alias gph="git push origin HEAD"
+alias gl='git pull'
+alias gp='git push'
+alias gst='git status'
+alias gfa='git fetch --all --prune'
+alias v="$EDITOR"
+alias vim="$EDITOR"
+alias p="sudo pacman -S"
+
+# Shortenings
+alias k="kubectl"
+alias tf="tofu"
+alias zj="zellij --config $HOME/.config/zellij/config.kdl"
+alias history="history 1"
+alias dotf='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias pc="pre-commit"
+alias yt="yt-dlp --embed-metadata -i"
+alias ytm="yt-dlp --embed-metadata -i -x --audio-format=aac --audio-quality=0"
+alias lf="lfub"
+alias awseks="aws eks update-kubeconfig --verbose --region us-east-1 --name"
+alias emacs="emacsclient -c -a 'emacs'"
+
+vn() {
+    export VAULT_NAMESPACE="$1"
+}
+
+# alias gclone="git clone $1 ~/projects"
+
+gclone() {
+    # assume $1 is a ssh url
+    repo=$1
+    folder_with_extension=${repo#*/}
+    folder=${folder_with_extension::-4}
+    echo $repo
+    echo $folder
+    cd ~/projects
+    git clone "$repo"
+    cd "$folder"
+}
+
+gitea_clone() {
+    repo=$1
+    repo_folder=$HOME/projects/$repo
+    git clone ssh://git@192.168.50.203:222/davidmendez/${repo}.git ${repo_folder}
+    cd $repo_folder
+}
+
+# Navigation
+cf() {
+	choice="$(find ~/.config -maxdepth 1 | fzf)"
+	[ $choice != "" ] && cd $choice && $EDITOR "$choice"
+;}
+
+function yy() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}

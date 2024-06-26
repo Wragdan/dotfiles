@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# curl "https://api.open-meteo.com/v1/forecast?latitude=15.500692008730145&longitude=-87.98588706105701&hourly=temperature_2m&timezone=America%2FChicago" | jq | less
+
+LATITUDE=15.50069
+LONGITUDE=-87.98588
+
+API_URL="https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&hourly=temperature_2m&timezone=America%2FChicago"
+
+RESPONSE=$(curl -s "${API_URL}")
+
+CURRENT_DATE=$(date "+%Y-%m-%dT%H:00")
+
+#echo "CURRENT_DATE=${CURRENT_DATE}"
+#echo "${CURRENT_DATE}"
+#echo "2023-11-18T22:00"
+
+TIME_INDEX=$(echo "${RESPONSE}" | DATE="$CURRENT_DATE" jq '.hourly.time | to_entries | .[] | select(.value == env.DATE) | .key')
+CURRENT_TEMP=$(echo "${RESPONSE}" | INDEX="$TIME_INDEX" jq '.hourly.temperature_2m[env.INDEX|tonumber]')
+UNITS=$(echo "$RESPONSE" | jq -r '.hourly_units.temperature_2m')
+
+echo "${CURRENT_TEMP} ${UNITS}"
+#echo "The current temperature in Tegucigalpa is ${CURRENT_TEMP} 'C"

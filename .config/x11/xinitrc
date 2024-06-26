@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# xinitrc runs automatically when you run startx.
+
+# There are some small but important commands that need to be run when we start
+# the graphical environment. There is a link to this file in ~/.xprofile
+# because that file is run automatically if someone uses a display manager
+# (login screen) and so they are needed there. To prevent doubling up commands,
+# I source them here with the line below.
+
+if [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/x11/xprofile" ]; then
+	. "${XDG_CONFIG_HOME:-$HOME/.config}/x11/xprofile"
+else
+	. "$HOME/.xprofile"
+fi
+
+if [ -d /etc/X11/xinit/xinitrc.d ] ; then
+ for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
+  [ -x "$f" ] && . "$f"
+ done
+ unset f
+fi
+
+while true; do
+    ssh-agent dwm >> /home/wragdan/.logs/dwm/$(date +%Y-%m-%d_%H.dwm.log) 2>&1
+done
+#export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+#systemctl --user import-environment DISPLAY XAUTHORITY
+#dbus-update-activation-environment --systemd DISPLAY XAUTHORITY
+#dbus-launch ssh-agent dwm
+#dbus-update-activation-environment --all
