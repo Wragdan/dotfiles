@@ -9,6 +9,10 @@
 #export PATH="$PATH:${$(find ~/.local/bin/ -type d)%%:}"
 export PATH="$PATH:$(find ~/.local/bin/ -type d | paste -sd ':' -)"
 
+if [[ $(uname) == "Darwin" ]]; then
+    eval $(/opt/homebrew/bin/brew shellenv)
+fi
+
 unsetopt PROMPT_SP
 
 # Default programs:

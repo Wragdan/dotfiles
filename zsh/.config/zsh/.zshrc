@@ -18,9 +18,10 @@ setopt HIST_FIND_NO_DUPS
 export EDITOR="nvim"
 
 # Aliases
-#[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc}" ] && source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
-source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
-source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/secrets
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ] && source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/secrets" ] && source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/secrets
+#source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
+#source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/secrets
 #source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/secrets
 #source $ZSH/.aliasrc
 #source $ZSH/.secrets
@@ -73,10 +74,6 @@ eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
 eval "$(fnm env --use-on-cd)"
 
-if [[ -x "$(command -v zellij)" ]];
-then
-    eval "$(zellij setup --generate-completion zsh | grep "^function")"
-fi;
 
 #vi mode
 bindkey -v
