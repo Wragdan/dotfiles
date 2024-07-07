@@ -47,7 +47,13 @@ return {
                         hidden = true,
                     })
                 end)
-            vim.keymap.set('n', 'fr', builtin.live_grep, {})
+            vim.keymap.set('n', 'fr',
+                function()
+                    builtin.live_grep({
+                        no_ignore = true,
+                        hidden = true
+                    })
+                end)
 
             vim.keymap.set('n', 'fb', function()
                 builtin.buffers()

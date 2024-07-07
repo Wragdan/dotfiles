@@ -10,6 +10,17 @@ return {
                 lsp_zero.default_keymaps({ buffer = bufnr })
             end)
 
+            lsp_zero.configure('rust_analyzer', {
+                settings = {
+                    ["rust-analyzer"] = {
+                        checkOnSave = {
+                            command = "clippy",
+                            extraArgs = { "--target-dir=./target/check" },
+                        },
+                    },
+                }
+            })
+
             lsp_zero.format_on_save({
                 format_opts = {
                     async = false,
@@ -39,13 +50,12 @@ return {
         lazy = false,
         config = true,
     },
-
-    -- Autocompletion
     {
         'hrsh7th/nvim-cmp',
         event = 'InsertEnter',
         dependencies = {
             { 'L3MON4D3/LuaSnip' },
+            { 'hrsh7th/cmp-nvim-lsp' },
         },
         config = function()
             -- Here is where you configure the autocompletion settings.
@@ -54,8 +64,16 @@ return {
 
             -- And you can configure cmp even more, if you want to.
             local cmp = require('cmp')
+            local cmp_action = require('lsp-zero').cmp_action()
+            local cmp_format = require('lsp-zero').cmp_format({ details = true })
+
+            require('luasnip.loaders.from_vscode').lazy_load()
 
             cmp.setup({
+                sources = {
+                    { name = 'nvim_lsp' },
+                    { name = 'luasnip' },
+                },
                 formatting = lsp_zero.cmp_format(),
                 mapping = cmp.mapping.preset.insert({
                     ['<CR>'] = cmp.mapping.confirm({ select = false }),
@@ -74,7 +92,7 @@ return {
                 ensure_installed = {
                     'tsserver',
                     'lua_ls',
-                    'rust_analyzer',
+                    --'rust_analyzer',
                     'gopls',
                 },
                 handlers = {
@@ -83,6 +101,7 @@ return {
                     end,
                     rust_analyzer = function()
                         lsp_config.rust_analyzer.setup({
+                            cmd = { "rust-analyzer" },
                             settings = {
                                 ["rust-analyzer"] = {
                                     checkOnSave = {
@@ -104,7 +123,7 @@ return {
                     end,
                     lua_ls = function()
                         local lua_opts = lsp_zero.nvim_lua_ls()
-                        require('lspconfig').lua_ls.setup(lua_opts)
+                        lsp_config.lua_ls.setup(lua_opts)
                         --vim.filetype.add({ extension = { templ = "templ" } })
                     end,
                 }
