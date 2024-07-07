@@ -1,5 +1,5 @@
 vim.g.mapleader = " "
-vim.g.user_emmet_leader_key = ","
+--vim.g.user_emmet_leader_key = ","
 
 
 -- Delete a word backwards

@@ -47,20 +47,22 @@ vim.opt.undofile = true
 vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 
+vim.opt.clipboard:append { 'unnamedplus' }
+
 vim.opt.updatetime = 50
 --vim.opt.colorcolumn = "120"
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-    pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
-    command = [[ set filetype=xdefaults ]],
+	pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
+	command = [[ set filetype=xdefaults ]],
 })
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-    pattern = { "*/templates/*.html" },
-    command = [[ set filetype=htmldjango ]],
+	pattern = { "*/templates/*.html" },
+	command = [[ set filetype=htmldjango ]],
 })
 
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-    pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
-    command = [[ !xrdb % ]],
+	pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
+	command = [[ !xrdb % ]],
 })

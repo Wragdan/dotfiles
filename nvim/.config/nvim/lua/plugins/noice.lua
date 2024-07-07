@@ -59,6 +59,7 @@ return {
                             find = "written",
                         },
                         opts = { skip = true },
+                        view = 'cmdline'
                     },
                     {
                         filter = {
@@ -67,6 +68,7 @@ return {
                             find = "yanked",
                         },
                         opts = { skip = true },
+                        view = 'cmdline'
                     },
                     {
                         filter = {

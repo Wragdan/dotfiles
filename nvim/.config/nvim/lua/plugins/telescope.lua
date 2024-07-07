@@ -1,7 +1,7 @@
 return {
     {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.5',
+        tag = '0.1.8',
         dependencies = { 'plenary' },
         config = function(plugin)
             local telescope = require('telescope')
@@ -13,8 +13,6 @@ return {
 
 
             local fb_actions = telescope.extensions.file_browser.actions
-            local z_utils = require("telescope._extensions.zoxide.utils")
-
 
             telescope.setup {
                 defaults = {
@@ -30,30 +28,16 @@ return {
                                 -- your custom normal mode mappings
                                 ["<leader>e"] = fb_actions.rename,
                                 ["<leader>c"] = fb_actions.create,
-                                ["<leader>."] = fb_actions.goto_parent_dir,
                                 ["/"] = function()
                                     vim.cmd('startinsert')
                                 end
                             },
                         },
                     },
-                    zoxide = {
-                        prompt_title = "[ Recent Directories ]",
-                        mappings = {
-                            default = {
-                                action = function(selection)
-                                    vim.cmd("edit " .. selection.path)
-                                end,
-                            },
-                            -- Opens the selected entry in a new split
-                            ["<leader>s"] = { action = z_utils.create_basic_command("vsplit") },
-                        },
-                    },
                 },
             }
 
             telescope.load_extension("file_browser")
-            telescope.load_extension("zoxide")
             telescope.load_extension("fzf")
 
             vim.keymap.set('n', 'ff',
@@ -65,7 +49,7 @@ return {
                 end)
             vim.keymap.set('n', 'fr', builtin.live_grep, {})
 
-            vim.keymap.set('n', '\\\\', function()
+            vim.keymap.set('n', 'fb', function()
                 builtin.buffers()
             end)
             vim.keymap.set('n', ';t', function()
@@ -77,14 +61,6 @@ return {
             vim.keymap.set('n', ';e', function()
                 builtin.diagnostics()
             end)
-
-            vim.keymap.set('n', ';gb', function()
-                builtin.git_branches()
-            end)
-
-            -- Telescope zoxide
-            vim.keymap.set("n", "cd", telescope.extensions.zoxide.list)
-
 
             -- Telescope File Browser
             vim.keymap.set("n", "sf", function()
@@ -108,9 +84,5 @@ return {
     {
         'nvim-telescope/telescope-fzf-native.nvim',
         build = 'make'
-    },
-    {
-        'jvgrootveld/telescope-zoxide',
-        dependencies = { 'nvim-telescope/telescope.nvim', 'plenary', 'nvim-lua/popup.nvim' }
     },
 }
