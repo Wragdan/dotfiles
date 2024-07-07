@@ -10,17 +10,6 @@ return {
                 lsp_zero.default_keymaps({ buffer = bufnr })
             end)
 
-            lsp_zero.configure('rust_analyzer', {
-                settings = {
-                    ["rust-analyzer"] = {
-                        checkOnSave = {
-                            command = "clippy",
-                            extraArgs = { "--target-dir=./target/check" },
-                        },
-                    },
-                }
-            })
-
             lsp_zero.format_on_save({
                 format_opts = {
                     async = false,
@@ -137,6 +126,17 @@ return {
         config = function()
             local lsp_zero = require('lsp-zero')
             lsp_zero.extend_lspconfig()
+
+            lsp_zero.configure('rust_analyzer', {
+                settings = {
+                    ["rust-analyzer"] = {
+                        checkOnSave = {
+                            command = "clippy",
+                            extraArgs = { "--target-dir=./target/check" },
+                        },
+                    },
+                }
+            })
 
             lsp_zero.on_attach(function(_, bufnr)
                 lsp_zero.default_keymaps({ buffer = bufnr, preserve_mappings = true })
