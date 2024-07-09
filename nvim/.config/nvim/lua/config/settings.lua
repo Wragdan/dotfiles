@@ -25,7 +25,7 @@ vim.opt.showcmd = true
 vim.opt.cmdheight = 1
 vim.opt.laststatus = 2
 vim.opt.expandtab = true
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 16
 vim.opt.shell = 'zsh'
 vim.opt.backupskip = { '/tmp/*', '/private/tmp/*' }
 vim.opt.inccommand = 'split'
@@ -53,16 +53,16 @@ vim.opt.updatetime = 50
 --vim.opt.colorcolumn = "120"
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-	pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
-	command = [[ set filetype=xdefaults ]],
+    pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
+    command = [[ set filetype=xdefaults ]],
 })
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-	pattern = { "*/templates/*.html" },
-	command = [[ set filetype=htmldjango ]],
+    pattern = { "*/templates/*.html" },
+    command = [[ set filetype=htmldjango ]],
 })
 
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-	pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
-	command = [[ !xrdb % ]],
+    pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
+    command = [[ !xrdb % ]],
 })
