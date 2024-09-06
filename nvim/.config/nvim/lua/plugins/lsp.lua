@@ -76,7 +76,7 @@ return {
                     ['lua_ls'] = { 'lua' },
                     ['rust_analyzer'] = { 'rust' },
                     ['gopls'] = { 'go' },
-                    ['tsserver'] = { 'javascript', 'typescript', 'typescriptreact' }
+                    ['ts_ls'] = { 'javascript', 'typescript', 'typescriptreact' }
                 }
             })
 
@@ -113,7 +113,7 @@ return {
             local lsp_config = require('lspconfig')
             require('mason-lspconfig').setup({
                 ensure_installed = {
-                    'tsserver',
+                    'ts_ls',
                     'lua_ls',
                     --'rust_analyzer',
                     'gopls',
