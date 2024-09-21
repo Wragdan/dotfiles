@@ -42,7 +42,7 @@ return {
             end)
 
             local cmp = require('cmp')
-            local cmp_action = require('lsp-zero').cmp_action()
+            --local cmp_action = require('lsp-zero').cmp_action()
 
             require('luasnip.loaders.from_vscode').lazy_load()
 
@@ -57,8 +57,8 @@ return {
                 mapping = cmp.mapping.preset.insert({
                     ['<CR>'] = cmp.mapping.confirm({ select = false }),
                     ['<C-Space>'] = cmp.mapping.complete(),
-                    ['<Tab>'] = cmp_action.luasnip_supertab(),
-                    ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
+                    --['<Tab>'] = cmp_action.luasnip_supertab(),
+                    --['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
                 }),
                 snippet = {
                     expand = function(args)
