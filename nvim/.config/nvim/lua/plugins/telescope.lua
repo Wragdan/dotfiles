@@ -67,6 +67,9 @@ return {
             vim.keymap.set('n', ';e', function()
                 builtin.diagnostics()
             end)
+            vim.keymap.set('n', ';b', function()
+                builtin.git_branches()
+            end)
 
             -- Telescope File Browser
             vim.keymap.set("n", "sf", function()
