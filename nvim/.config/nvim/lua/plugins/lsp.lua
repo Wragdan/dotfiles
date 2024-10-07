@@ -149,6 +149,17 @@ return {
                         lsp_config.lua_ls.setup(lua_opts)
                         --vim.filetype.add({ extension = { templ = "templ" } })
                     end,
+                    nil_ls = function()
+                        lsp_config.nil_ls.setup({
+                            settings = {
+                                ['nil'] = {
+                                    formatting = {
+                                        command = { "nixfmt" },
+                                    },
+                                },
+                            },
+                        })
+                    end
                 }
             })
         end

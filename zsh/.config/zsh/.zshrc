@@ -20,60 +20,16 @@ export EDITOR="nvim"
 # Aliases
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ] && source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/secrets" ] && source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/secrets
-#source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
-#source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/secrets
-#source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/secrets
-#source $ZSH/.aliasrc
-#source $ZSH/.secrets
 
-br() {
-        result=$(git branch -a --color=always | grep -v '/HEAD\s' | sort |
-                fzf --border --ansi --tac --preview-window right:70% \
-                        --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h
-%d %s" $(sed s/^..// <<< {} | cut -d" " -f1) | head -'$LINES |
-                sed 's/^..//' | cut -d' ' -f1)
-        if [[ $result != "" ]]; then
-                if [[ $result == remotes/* ]]; then
-                        git checkout --track $(echo $result | sed 's#remotes/##')
-                else
-                        git checkout "$result"
-                fi
-        fi
-}
-
-branchd() {
-        result=$(git branch -a --color=always | grep -v '/HEAD\s' | sort |
-                fzf --multi --border --ansi --tac --preview-window right:70% \
-                        --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h
-%d %s" $(sed s/^..// <<< {} | cut -d" " -f1) | head -'$LINES |
-                sed 's/^..//' | cut -d' ' -f1)
-
-        # for line in $result; do
-        #         branch_arr+=("$line")
-        # done
-        if [[ $result != "" ]]; then
-                if [[ $result == remotes/* ]]; then
-                        exit 0
-                else
-                        git branch -D $(echo "$result"  | tr '\n' ' ')
-                fi
-        fi
-}
-
-export PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/.local/share/cargo/bin"
 export PATH="$PATH:$HOME/.local/share/go/bin"
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/go/bin"
 
-
-export ZELLIJ_CONFIG_DIR="$HOME/.config/zellij"
-
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
 eval "$(fnm env --use-on-cd)"
-
 
 #vi mode
 bindkey -v
@@ -82,27 +38,19 @@ export KEYTIMEOUT=1
 autoload edit-command-line; zle -N edit-command-line
 bindkey '^e' edit-command-line
 
-proj() {
-        result=$(find ~/projects -mindepth 1 -maxdepth 2 -type d | fzf)
-        if [[ $result != "" ]]; then
-                cd $result
-        fi
-}
-
-# bun completions
-[ -s "/Users/administrator/.bun/_bun" ] && source "/Users/administrator/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
 source $ZSH/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $ZSH/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fpath=($ZSH/plugins/zsh-autocompletions/src $fpath)
 
 export GPG_TTY=$(tty)
 
-if [[ $(uname) == "Linux" ]]; then
-    #eval $(keychain --eval --quiet gitea-pc-gaming-01)
-    #. /opt/asdf-vm/asdf.sh
+#if [[ $(uname) == "Linux" ]]; then
+#    #eval $(keychain --eval --quiet gitea-pc-gaming-01)
+#    #. /opt/asdf-vm/asdf.sh
+#fi
+
+# Nix
+if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+  . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
 fi
+# End Nix
