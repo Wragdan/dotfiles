@@ -17,9 +17,22 @@
     pkgs.starship
     pkgs.fnm
     pkgs.yazi
+    pkgs.typst
+    pkgs.zathura
+    pkgs.bacon
   ];
 
   programs.home-manager.enable = true;
+
+  home.file = {
+    ".config/nvim".source = ~/.dotfiles/nvim/.config/nvim;
+    ".config/nix".source = ~/.dotfiles/nix/.config/nix;
+    ".config/nix-darwin".source = ~/.dotfiles/nix-darwin/.config/nix-darwin;
+    ".config/shell".source = ~/.dotfiles/shell/.config/shell;
+    ".config/starship.toml".source = ~/.dotfiles/starship/.config/starship.toml;
+    ".config/yazi".source = ~/.dotfiles/yazi/.config/yazi;
+    ".config/zsh".source = ~/.dotfiles/zsh/.config/zsh;
+  };
 
   programs.neovim = {
     enable = true;
