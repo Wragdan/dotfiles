@@ -4,8 +4,8 @@ st.alphaOffset: 0.05
 
 !! Set a default font and font size as below:
 !!st.font: FiraCodeNerdFontMono-Regular-12;
-st.font: MesloLGS NF:style=Regular;pixelsize=12;
-st.fontal0: NotoSerifCJK-Regular-12
+st.font: MesloLGS NF:style=Regular:size=16
+st.fontal0: NotoSerifCJK-Regular:size=16
 
 !! dwm catpuccin
 dwm.normbordercolor: #1E1E2E 
