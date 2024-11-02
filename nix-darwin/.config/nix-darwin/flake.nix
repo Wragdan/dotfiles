@@ -26,6 +26,7 @@
           # $ nix-env -qaP | grep wget
           environment.systemPackages = [
             pkgs.pkgs.nixfmt-rfc-style
+            pkgs.nushell
           ];
 
           # Auto upgrade nix package and the daemon service.
