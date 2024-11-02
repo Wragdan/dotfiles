@@ -10,5 +10,10 @@ return {
             highlight = { enable = true },
             indent = { enable = true },
         })
-    end
+    end,
+    dependencies = {
+        -- NOTE: additional parser
+        { "nushell/tree-sitter-nu", build = ":TSUpdate nu" },
+    },
+    build = ":TSUpdate",
 }

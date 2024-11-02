@@ -32,6 +32,7 @@
     ".config/starship.toml".source = ~/.dotfiles/starship/.config/starship.toml;
     ".config/yazi".source = ~/.dotfiles/yazi/.config/yazi;
     ".config/zsh".source = ~/.dotfiles/zsh/.config/zsh;
+    ".config/nushell".source = ~/.dotfiles/nushell/.config/nushell;
   };
 
   programs.neovim = {
