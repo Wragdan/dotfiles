@@ -1,16 +1,3 @@
-
-#export def git_main_branch [] {
-#    git remote show origin
-#        | lines
-#        | str trim
-#        | find --regex 'HEAD .*?[：: ].+'
-#        | first
-#        | str replace --regex 'HEAD .*?[：: ]\s*(.+)' '$1'
-#}
-
-#export def git_main_branch [] {
-#}
-
 export def editor [file?: path] {
     # to change default editor in most of commands replace nvim here
     nvim ($file | default .)
@@ -18,10 +5,48 @@ export def editor [file?: path] {
 
 alias e = editor
 alias nuconf = editor $nu.config-path
+alias darw = darwin-rebuild switch --flake ~/.dotfiles/nix-darwin/.config/nix-darwin --show-trace
 
-#alias gcm = git checkout (git_main_branch)
+export def git_main_branch [] {
+    let in_git_repo = (do { git rev-parse --abbrev-ref HEAD } | complete | get stdout | is-not-empty)
 
-let refs = (echo refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default} | str expand )
+    if $in_git_repo == false {
+        error make {msg: "not in git repo"}
+    }
+
+    let refs = (echo refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default} | str expand )
+    for ref in $refs {
+        let ref_exit_code = (do { git show-ref -q --verify $ref | complete | get exit_code })
+
+        if $ref_exit_code == 0 {
+            return ($ref | split words | last)
+        }
+
+    }
+    return "master"
+}
+
+export def git_develop_branch [] {
+    let in_git_repo = (do { git rev-parse --abbrev-ref HEAD } | complete | get stdout | is-not-empty)
+
+    if $in_git_repo == false {
+        error make {msg: "not in git repo"}
+    }
+
+    let refs = [dev, devel, development]
+    for ref in $refs {
+        let ref_exit_code = (do { git show-ref -q --verify $ref | complete | get exit_code })
+
+        if $ref_exit_code == 0 {
+            return ($ref | split words | last)
+        }
+
+    }
+    return "develop"
+}
+
+alias gcm = git checkout (git_main_branch)
+alias gcd = git checkout (git_develop_branch)
 
 export def _git_log [v num] {
     let stat = if $v {
@@ -85,51 +110,6 @@ export def gbD [branch: string@"nu-complete git branches"] {
     git branch -D $branch
 }
 
-def "nu-complete git remotes" [] {
-  ^git remote | lines | each { |line| $line | str trim }
-}
-
-export def gf [
-    branch: string@"nu-complete git branches"
-    remote?: string@"nu-complete git remotes"
-] {
-    let remote = if ($remote|is-empty) { 'origin' } else { $remote }
-    git fetch $remote $branch
-}
-
-def __zoxide_menu [] {
-    {
-      name: zoxide_menu
-      only_buffer_difference: true
-      marker: "| "
-      type: {
-          layout: columnar
-          page_size: 20
-      }
-      style: {
-          text: green
-          selected_text: green_reverse
-          description_text: yellow
-      }
-      source: { |buffer, position|
-          zoxide query -ls $buffer
-          | parse -r '(?P<description>[0-9]+) (?P<value>.+)'
-      }
-    }
-}
-
-def __zoxide_keybinding [] {
-    {
-      name: zoxide_menu
-      modifier: control
-      keycode: char_s
-      mode: [emacs, vi_normal, vi_insert]
-      event: [
-        { send: menu name: zoxide_menu }
-      ]
-    }
-}
-
 def __edit_keybinding [] {
     {
       name: edit
@@ -142,7 +122,7 @@ def __edit_keybinding [] {
     }
 }
 
-$env.config  = ($env.config
-              | upsert menus ($env.config.menus | append (__zoxide_menu))
-              | upsert keybindings ($env.config.keybindings | append [(__zoxide_keybinding) (__edit_keybinding)])
-              )
+$env.config = (
+    $env.config
+        | upsert keybindings ($env.config.keybindings | append [(__edit_keybinding)])
+)

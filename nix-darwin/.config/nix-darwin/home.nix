@@ -20,6 +20,9 @@
     pkgs.typst
     pkgs.zathura
     pkgs.bacon
+    pkgs.argc
+    pkgs.yq
+    pkgs.zellij
   ];
 
   programs.home-manager.enable = true;
