@@ -17,10 +17,10 @@ $env.config = {
 }
 
 # argc-completions
-$env.ARGC_COMPLETIONS_ROOT = '/Users/administrator/projects/argc-completions'
+$env.ARGC_COMPLETIONS_ROOT = $'($env.HOME)/projects/argc-completions'
 $env.ARGC_COMPLETIONS_PATH = ($env.ARGC_COMPLETIONS_ROOT + '/completions/macos:' + $env.ARGC_COMPLETIONS_ROOT + '/completions')
 $env.PATH = ($env.PATH | prepend ($env.ARGC_COMPLETIONS_ROOT + '/bin'))
-argc --argc-completions nushell | save -f '/Users/administrator/projects/argc-completions/tmp/argc-completions.nu'
-source '/Users/administrator/projects/argc-completions/tmp/argc-completions.nu'
+argc --argc-completions nushell | save -f $'($env.HOME)/projects/argc-completions/tmp/argc-completions.nu'
+source $'($env.HOME)/projects/argc-completions/tmp/argc-completions.nu'
 
 source ./alias.nu

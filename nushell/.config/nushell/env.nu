@@ -4,11 +4,6 @@ use std "path add"
 
 let os = (uname | get operating-system)
 
-#fpath[4,0]="/opt/homebrew/share/zsh/site-functions";
-#PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/Users/administrator/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/Users/administrator/.local/state/fnm_multishells/38172_1730521132487/bin:/etc/profiles/per-user/administrator/bin:/run/current-system/sw/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin:/Users/administrator/.local/bin/:/Users/administrator/.local/bin//statusbar:/Users/administrator/.cargo/bin:/Users/administrator/.local/share/cargo/bin:/Users/administrator/.local/share/go/bin:/Users/administrator/.local/bin:/Users/administrator/go/bin"; export PATH;
-#[ -z "${MANPATH-}" ] || export MANPATH=":${MANPATH#:}";
-#export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
-
 if ($os == "Darwin") {
     $env.HOMEBREW_PREFIX = "/opt/homebrew"
     $env.HOMEBREW_CELLAR = "/opt/homebrew/Cellar"
