@@ -1,0 +1,20 @@
+#!/bin/sh
+
+get_curr_ws() {
+    local curr_ws=$(leftwm state -q | jq -r '.workspaces[].tags[] | select(.focused == true) | .name')
+    echo $curr_ws
+}
+
+current_ws=$(get_curr_ws)
+
+echo $current_ws
+
+while true
+do
+    new_curr_ws=$(get_curr_ws)
+
+    if [[ $current_ws != $new_curr_ws ]]; then
+        current_ws=$new_curr_ws
+        echo $current_ws
+    fi
+done
