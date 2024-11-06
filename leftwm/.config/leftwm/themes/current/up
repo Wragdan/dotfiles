@@ -19,7 +19,7 @@ leftwm-command "LoadTheme $SCRIPTPATH/theme.ron"
 #fi
 
 # load polybar
-#polybar -c $SCRIPTPATH/polybar.ini &> /dev/null &
+polybar -r &> /dev/null &
 
 # load picom (note: cannot set daemon command from config file)
 #picom --daemon --config $SCRIPTPATH/picom.conf
