@@ -3,10 +3,6 @@ export def editor [file?: path] {
     nvim ($file | default .)
 }
 
-alias e = editor
-alias nuconf = editor $nu.config-path
-alias darw = darwin-rebuild switch --flake ~/.dotfiles/nix-darwin/.config/nix-darwin --show-trace
-
 export def git_main_branch [] {
     let in_git_repo = (do { git rev-parse --abbrev-ref HEAD } | complete | get stdout | is-not-empty)
 
@@ -47,6 +43,47 @@ export def git_develop_branch [] {
 
 alias gcm = git checkout (git_main_branch)
 alias gcd = git checkout (git_develop_branch)
+alias ga = git add
+alias gba = git branch -all
+alias gcb = git checkout -b
+alias gc = git commit --verbose
+alias gcn! = git commit --verbose --no-edit --amend
+alias gd = git diff 
+alias gds = git diff --staged
+alias glh = git pull origin (git rev-parse --abbrev-ref HEAD)
+alias gph = git push origin HEAD
+alias gfa = git fetch --all --prune
+
+alias e = editor
+alias nuconf = editor $nu.config-path
+alias darw = darwin-rebuild switch --flake ~/.dotfiles/nix-darwin/.config/nix-darwin --show-trace
+alias k = kubectl
+
+export def "nu-complete kube ns" [] {
+    kubectl get namespaces
+    | from ssv -a
+    | each {|x|
+        {value: $x.NAME, description: $"($x.AGE)\t($x.STATUS)"}
+    }
+}
+
+def "nu-complete kubectl get pods" [] { 
+    ^kubectl get pods --output json | from json | get items | get metadata.name
+}
+
+def kgp [
+    pod?: string@"nu-complete kubectl get pods"
+    --namespace (-n): string@"nu-complete kube ns"
+    --all (-a)
+] {
+    if ($pod | is-not-empty) {
+        kubectl get pods -n $namespace $pod
+    } else if $all {
+        kubectl get pods -a --wide
+    } else {
+        kubectl get pods -n $namespace -wide $pod
+    }
+}
 
 export def _git_log [v num] {
     let stat = if $v {

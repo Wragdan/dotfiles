@@ -54,3 +54,14 @@ if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
   . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
 fi
 # End Nix
+
+PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+
+# argc-completions
+export ARGC_COMPLETIONS_ROOT="/Users/administrator/projects/argc-completions"
+export ARGC_COMPLETIONS_PATH="$ARGC_COMPLETIONS_ROOT/completions/macos:$ARGC_COMPLETIONS_ROOT/completions"
+export PATH="$ARGC_COMPLETIONS_ROOT/bin:$PATH"
+# To add completions for only the specified command, modify next line e.g. argc_scripts=( cargo git )
+argc_scripts=( $(/bin/ls -p -1 "$ARGC_COMPLETIONS_ROOT/completions/macos" "$ARGC_COMPLETIONS_ROOT/completions" | sed -n 's/\.sh$//p') )
+source <(argc --argc-completions zsh $argc_scripts)
+

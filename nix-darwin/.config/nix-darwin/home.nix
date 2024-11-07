@@ -21,7 +21,6 @@
     pkgs.zathura
     pkgs.bacon
     pkgs.argc
-    pkgs.yq
     pkgs.zellij
   ];
 

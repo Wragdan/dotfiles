@@ -1,6 +1,3 @@
-
-alias ll = ls -l
-
 source ~/.zoxide.nu
 use ~/.cache/starship/init.nu
 

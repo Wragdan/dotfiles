@@ -40,6 +40,9 @@ path add "/run/current-system/sw/bin"
 path add "/nix/var/nix/profiles/default/bin"
 path add "/opt/homebrew/bin"
 path add "/opt/homebrew/sbin"
+path add "/usr/local/bin"
+path add "/usr/local/bin"
+path add "/opt/homebrew/opt/gnu-sed/libexec/gnubin"
 
 # zoxide
 zoxide init nushell | save -f ~/.zoxide.nu
