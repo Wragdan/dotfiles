@@ -53,6 +53,7 @@ alias gds = git diff --staged
 alias glh = git pull origin (git rev-parse --abbrev-ref HEAD)
 alias gph = git push origin HEAD
 alias gfa = git fetch --all --prune
+alias gst = git status
 
 alias e = editor
 alias nuconf = editor $nu.config-path
