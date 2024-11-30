@@ -32,9 +32,9 @@ vim.opt.inccommand = 'split'
 vim.opt.ignorecase = true
 vim.opt.smarttab = true
 vim.opt.breakindent = true
-vim.opt.shiftwidth = 4
 vim.opt.tabstop = 2
-vim.opt.softtabstop = 4
+vim.opt.softtabstop = 2
+vim.opt.shiftwidth = 2
 vim.opt.wrap = false
 vim.opt.backspace = { 'start', 'eol', 'indent' }
 vim.opt.path:append { '**' }
@@ -53,16 +53,20 @@ vim.opt.updatetime = 50
 --vim.opt.colorcolumn = "120"
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-    pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
-    command = [[ set filetype=xdefaults ]],
+  pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
+  command = [[ set filetype=xdefaults ]],
 })
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-    pattern = { "*/templates/*.html" },
-    command = [[ set filetype=htmldjango ]],
+  pattern = { "*/templates/*.html" },
+  command = [[ set filetype=htmldjango ]],
 })
 
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-    pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
-    command = [[ !xrdb % ]],
+  pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
+  command = [[ !xrdb % ]],
 })
+
+vim.g.markdown_fenced_languages = {
+  "ts=typescript"
+}
