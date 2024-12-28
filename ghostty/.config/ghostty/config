@@ -1,0 +1,5 @@
+# vim: ft=config
+
+theme = catppuccin-mocha
+font-family = MesloLGS NF Regular
+font-size = 16

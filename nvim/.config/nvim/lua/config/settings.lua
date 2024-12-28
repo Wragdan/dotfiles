@@ -50,7 +50,7 @@ vim.opt.isfname:append("@-@")
 vim.opt.clipboard:append { 'unnamedplus' }
 
 vim.opt.updatetime = 50
---vim.opt.colorcolumn = "120"
+vim.opt.colorcolumn = "120"
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   pattern = { "Xresources", "Xdefaults", "xresources", "xdefaults" },
