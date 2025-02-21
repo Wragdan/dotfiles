@@ -63,7 +63,9 @@
     scratchpad: [
         (name: "Alacritty", args: None, value: "alacritty", x: 860, y: 390, height: 300, width: 200),
     ],
-    window_rules: [],
+    window_rules: [
+      (window_class: "rpg", spawn_floating: true),
+    ],
     disable_current_tag_swap: false,
     disable_tile_drag: false,
     disable_window_snap: true,
@@ -78,13 +80,12 @@
     keybind: [
         (command: Execute, value: "dmenu_run", modifier: ["modkey"], key: "d"),
         (command: Execute, value: "firefox", modifier: ["modkey"], key: "w"),
-        (command: Execute, value: "st", modifier: ["modkey"], key: "Return"),
+        (command: Execute, value: "ghostty", modifier: ["modkey"], key: "Return"),
         (command: CloseWindow, value: "", modifier: ["modkey", "Shift"], key: "c"),
         (command: SoftReload, value: "", modifier: ["modkey", "Shift"], key: "r"),
         (command: Execute, value: "loginctl kill-session $XDG_SESSION_ID", modifier: ["modkey", "Shift"], key: "x"),
         (command: Execute, value: "slock", modifier: ["modkey", "Control"], key: "l"),
-        //(command: MoveToLastWorkspace, value: "", modifier: ["modkey", "Shift"], key: "w"),
-        (command: SwapTags, value: "", modifier: ["modkey"], key: "w"),
+        (command: ToggleFloating, value: "", modifier: ["modkey", "Control"], key: "Return"),
         (command: MoveWindowUp, value: "", modifier: ["modkey", "Shift"], key: "k"),
         (command: MoveWindowDown, value: "", modifier: ["modkey", "Shift"], key: "j"),
         (command: MoveWindowTop, value: "", modifier: ["modkey", "Shift"], key: "Return"),
