@@ -27,6 +27,7 @@
     pkgs.just
     pkgs.kubectl
     pkgs.lazygit
+    pkgs.helix
     #pkgs.deno
   ];
 

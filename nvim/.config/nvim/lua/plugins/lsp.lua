@@ -119,6 +119,16 @@ return {
           function(server_name)
             lsp_config[server_name].setup({})
           end,
+          tinymist = function()
+            lsp_config.tinymist.setup({
+              offset_encoding = "utf-8",
+              settings = {
+                formatterMode = "typstyle",
+                exportPdf = "onSave",
+                --semanticTokens = "disable"
+              }
+            })
+          end,
           denols = function()
             lsp_config.denols.setup({ root_dir = lsp_config.util.root_pattern("deno.json", "deno.jsonc"), single_file_support = false })
           end,
