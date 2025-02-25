@@ -38,10 +38,6 @@ export KEYTIMEOUT=1
 autoload edit-command-line; zle -N edit-command-line
 bindkey '^e' edit-command-line
 
-source $ZSH/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $ZSH/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fpath=($ZSH/plugins/zsh-autocompletions/src $fpath)
-
 export GPG_TTY=$(tty)
 
 #if [[ $(uname) == "Linux" ]]; then
