@@ -1,1 +1,9 @@
+[opener]
+pdf = [
+	{ run = 'zathura "$0"', orphan = true, desc = "Open PDF" },
+]
 
+[open]
+rules = [
+	{ mime = "application/pdf", use = "pdf" },
+]

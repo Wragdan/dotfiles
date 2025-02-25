@@ -38,10 +38,6 @@ export KEYTIMEOUT=1
 autoload edit-command-line; zle -N edit-command-line
 bindkey '^e' edit-command-line
 
-source $ZSH/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $ZSH/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fpath=($ZSH/plugins/zsh-autocompletions/src $fpath)
-
 export GPG_TTY=$(tty)
 
 #if [[ $(uname) == "Linux" ]]; then
@@ -64,4 +60,3 @@ PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
 ## To add completions for only the specified command, modify next line e.g. argc_scripts=( cargo git )
 #argc_scripts=( $(/bin/ls -p -1 "$ARGC_COMPLETIONS_ROOT/completions/macos" "$ARGC_COMPLETIONS_ROOT/completions" | sed -n 's/\.sh$//p') )
 #source <(argc --argc-completions zsh $argc_scripts)
-

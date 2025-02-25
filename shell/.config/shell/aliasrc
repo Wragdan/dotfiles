@@ -81,6 +81,14 @@ alias ytm="yt-dlp --embed-metadata -i -x --audio-format=aac --audio-quality=0"
 alias lf="lfub"
 alias awseks="aws eks update-kubeconfig --verbose --region us-east-1 --name"
 
+# Voidlinux
+alias xbi='sudo xbps-install -S'
+alias xbr='sudo xbps-remove -R'
+alias xbu='sudo xbps-install -Su'
+alias xbf='xbps-query -Rs'
+alias xbo='sudo xbps-remove -ov'
+alias xbc='sudo xbps-remove -Ov'
+
 # Navigation
 cf() {
 	choice="$(find ~/.config -maxdepth 1 | fzf)"

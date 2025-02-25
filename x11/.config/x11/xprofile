@@ -3,9 +3,9 @@
 # This file runs when a DM logs you into a graphical session.
 # If you use startx/xinit like a Chad, this file will also be sourced.
 
-./nvidia-settings-rc
+#./nvidia-settings-rc
 xrandr --output DP-2 --mode 5120x1440 --rate 240
-feh --bg-scale /home/wragdan/.config/bg4.jpg
+feh --bg-scale /home/wragdan/wallpapers/bg1.jpg
 xrdb ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources & xrdbpid=$!	# Uncomment to use Xresources colors/settings on startup
 xset -dpms
 xset s noblank
@@ -14,7 +14,7 @@ xset s 180 120
 #xss-lock -- slock -m "$(cowsay "Your screen is locked")" &
 
 #autostart="mpd xcompmgr dunst unclutter pipewire remapd"
-autostart="xcompmgr dunst unclutter pipewire"
+autostart="picom dunst pipewire sxhkd"
 
 for program in $autostart; do
 	pidof -sx "$program" || "$program" &
