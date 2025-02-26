@@ -61,3 +61,4 @@ PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
 #argc_scripts=( $(/bin/ls -p -1 "$ARGC_COMPLETIONS_ROOT/completions/macos" "$ARGC_COMPLETIONS_ROOT/completions" | sed -n 's/\.sh$//p') )
 #source <(argc --argc-completions zsh $argc_scripts)
 
+. ~/.ssh/ssh-agent-env > /dev/null
