@@ -1,0 +1,50 @@
+# restart sxhkd
+super + shift + r
+  pkill -usr1 -x sxhkd; notify-send 'sxhkd' 'Reloaded config'
+
+# change wallpaper
+super + r ; c ; b
+  shuf -e -n1 /home/wragdan/wallpapers/* | xargs feh --bg-scale
+
+# file explorer
+super + e
+  st -e yazi
+
+# browser
+super + w
+  firefox
+
+# audio and volume
+super + minus
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof dwmblocks)
+
+super + underscore
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%-; kill -44 $(pidof dwmblocks)
+
+super + equal
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof dwmblocks)
+
+super + plus
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%+; kill -44 $(pidof dwmblocks)
+
+XF86AudioMute
+  wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)
+
+XF86AudioLowerVolume
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof dwmblocks)
+
+XF86AudioRaiseVolume
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof dwmblocks)
+
+shift + XF86AudioLowerVolume
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%-; kill -44 $(pidof dwmblocks)
+
+shift + XF86AudioRaiseVolume
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%+; kill -44 $(pidof dwmblocks)
+
+super + d
+  dmenu_run
+
+# dwm
+#super + {h,l}
+#  dwmc setmfact {-,+}0.05
