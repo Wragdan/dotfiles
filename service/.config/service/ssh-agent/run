@@ -1,6 +1,6 @@
 #!/bin/sh
 
-file=~/.ssh/ssh-agent-env
+file=/home/wragdan/.ssh/ssh-agent-env
 
 exec > "$file"
 

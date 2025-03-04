@@ -14,7 +14,7 @@ xset s 180 120
 #xss-lock -- slock -m "$(cowsay "Your screen is locked")" &
 
 #autostart="mpd xcompmgr dunst unclutter pipewire remapd"
-autostart="xcompmgr dunst unclutter pipewire pipewire-pulse"
+autostart="xcompmgr dunst pipewire pipewire-pulse"
 
 for program in $autostart; do
 	pidof -sx "$program" || "$program" &
