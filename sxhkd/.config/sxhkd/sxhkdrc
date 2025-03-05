@@ -12,7 +12,7 @@ super + e
 
 # browser
 super + w
-  firefox
+  librewolf
 
 # audio and volume
 super + minus
