@@ -3,8 +3,8 @@
 !!Xcursor.size: 12
 
 !! Transparency (0-1):
-st.alpha: 0.98
-st.alphaOffset: 0.05
+!!st.alpha: 1
+!!st.alphaOffset: 0.05
 
 !! Set a default font and font size as below:
 !!st.font: FiraCodeNerdFontMono-Regular-12;
