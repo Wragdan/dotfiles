@@ -4,5 +4,5 @@ theme = catppuccin-mocha
 font-family = MesloLGS NF Regular
 font-size = 16
 
-window-decoration = false
+window-decoration = true
 background-opacity = 0.98

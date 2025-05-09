@@ -13,7 +13,8 @@ return {
   end,
   dependencies = {
     -- NOTE: additional parser
-    { "nushell/tree-sitter-nu", build = ":TSUpdate nu" },
+    { "nushell/tree-sitter-nu",      build = ":TSUpdate nu" },
+    { "rayliwell/tree-sitter-rstml", build = ":TSUpdate rshtml" },
   },
   build = ":TSUpdate",
 }

@@ -82,10 +82,22 @@ return {
       lsp_zero.configure('rust_analyzer', {
         settings = {
           ["rust-analyzer"] = {
+            inlayHints = {
+              enable = true,
+              typeHints = true,
+              parameterHints = true,
+            },
             checkOnSave = {
               command = "clippy",
               extraArgs = { "--target-dir=./target/check" },
+              allFeatures = true,
             },
+            cargo = {
+              allFeatures = true
+            },
+            rustfmt = {
+              overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" }
+            }
           },
         }
       })

@@ -21,14 +21,9 @@
     pkgs.zathura
     pkgs.bacon
     pkgs.argc
-    #pkgs.helm
     pkgs.htop
     pkgs.jq
-    pkgs.just
-    pkgs.kubectl
     pkgs.lazygit
-    pkgs.helix
-    #pkgs.deno
   ];
 
   programs.home-manager.enable = true;
