@@ -1,0 +1,95 @@
+# vim:ft=gitconfig
+
+[user]
+  name = Wragdan
+  signingkey = 23E176E2B3292BAD
+  email = 17775924+Wragdan@users.noreply.github.com
+
+[core]
+  compression = 9
+  whitespace = error
+  preloadindex = true
+  autocrlf = input
+  fsync = none
+  whitespace = error
+
+[advice]
+  addEmptyPathspec = false
+  pushNonFastForward = false
+  statusHints = false
+
+[blame]
+  coloring = highlightRecent
+  date = relative
+
+[diff]
+  context = 3  # less context in diffs
+  renames = copies  # detect copies as renames in diffs
+  interHunkContext = 10  # merge near hunks in diffs
+
+[init]
+  defaultBranch = main
+
+[log]
+  abbrevCommit = true
+  graphColors = blue,yellow,cyan,magenta,green,red
+
+[status]
+  branch = true
+  #short = true
+  showStash = true
+  showUntrackedFiles = all  # show individual untracked files
+
+[pager]
+  branch = false
+  diff = diff-so-fancy | $PAGER
+
+[push]
+  autoSetupRemote = true
+  default = current
+  followTags = true
+  gpgSign = false
+
+[pull]
+  rebase = true
+
+[rebase]
+    autoStash = true
+
+# Colors
+[color "blame"]
+    highlightRecent = black bold,1 year ago,white,1 month ago,default,7 days ago,blue
+
+[color "branch"]
+    current  = magenta
+    local    = default
+    remote   = yellow
+    upstream = green
+    plain    = blue
+
+[color "diff"]
+    meta       = black bold
+    frag       = magenta
+    context    = white
+    whitespace = yellow reverse
+
+[interactive]
+    diffFilter = diff-so-fancy --patch
+    singlekey = true
+
+[diff-so-fancy]
+    markEmptyLines = false
+
+[url "git@github.com:"]
+    insteadOf = "gh:"
+
+[commit]
+  gpgsign = true
+
+[merge]
+  tool = fugitive
+[rerere]
+  enabled = true
+[mergetool "fugitive"]
+  cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
+
