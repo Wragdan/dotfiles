@@ -1,9 +1,7 @@
 # vim:ft=gitconfig
 
-[user]
-  name = Wragdan
-  signingkey = 23E176E2B3292BAD
-  email = 17775924+Wragdan@users.noreply.github.com
+[include]
+  path = ./user
 
 [core]
   compression = 9
