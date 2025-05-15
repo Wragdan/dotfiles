@@ -25,4 +25,5 @@ fi
 #    ssh-agent dwm >> /home/wragdan/.logs/dwm/$(date +%Y-%m-%d_%H.dwm.log) 2>&1
 #done
 
+#dbus-update-activation-environment --all
 exec dbus-launch ssh-agent dwm >> /home/wragdan/.logs/dwm/$(date +%Y-%m-%d_%H.dwm.log) 2>&1
