@@ -40,7 +40,7 @@
 
 [pager]
   branch = false
-  diff = diff-so-fancy | $PAGER
+  diff = delta
 
 [push]
   autoSetupRemote = true
@@ -52,40 +52,42 @@
   rebase = true
 
 [rebase]
-    autoStash = true
+  autoStash = true
 
 # Colors
 [color "blame"]
-    highlightRecent = black bold,1 year ago,white,1 month ago,default,7 days ago,blue
+  highlightRecent = black bold,1 year ago,white,1 month ago,default,7 days ago,blue
 
 [color "branch"]
-    current  = magenta
-    local    = default
-    remote   = yellow
-    upstream = green
-    plain    = blue
+  current  = magenta
+  local    = default
+  remote   = yellow
+  upstream = green
+  plain    = blue
 
 [color "diff"]
-    meta       = black bold
-    frag       = magenta
-    context    = white
-    whitespace = yellow reverse
+  meta       = black bold
+  frag       = magenta
+  context    = white
+  whitespace = yellow reverse
 
 [interactive]
-    diffFilter = diff-so-fancy --patch
-    singlekey = true
+  diffFilter = delta --color-only
+  singlekey = true
 
-[diff-so-fancy]
-    markEmptyLines = false
+[delta]
+  navigate = true
+  dark = true
 
 [url "git@github.com:"]
-    insteadOf = "gh:"
+  insteadOf = "gh:"
 
 [commit]
   gpgsign = true
 
 [merge]
   tool = fugitive
+  conflictstyle = zdiff3
 [rerere]
   enabled = true
 [mergetool "fugitive"]
