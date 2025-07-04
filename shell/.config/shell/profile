@@ -34,6 +34,9 @@ export GOPATH="$XDG_DATA_HOME/go"
 export GOMODCACHE="$XDG_CACHE_HOME/go/mod"
 export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
 export NIX_CONF_DIR=$HOME/.config/nix
+export MOZ_ENABLE_DBUS=1
+export TZ=America/Tegucigalpa
+export HARDWARECLOCK=localtime
 
 #[ ! -f ${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc ] && setsid shortcuts >/dev/null 2>&1
 

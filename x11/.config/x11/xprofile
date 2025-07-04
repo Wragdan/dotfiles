@@ -9,12 +9,12 @@ feh --bg-scale /home/wragdan/wallpapers/bg1.jpg
 xrdb ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources & xrdbpid=$!	# Uncomment to use Xresources colors/settings on startup
 xset -dpms
 xset s noblank
-xset s on
-xset s 180 120
+#xset s on
+#xset s 180 120
 #xss-lock -- slock -m "$(cowsay "Your screen is locked")" &
 
-#autostart="mpd xcompmgr dunst unclutter pipewire remapd"
-autostart="picom dunst pipewire sxhkd"
+#autostart="picom dunst pipewire sxhkd"
+autostart="mpd dunst pipewire sxhkd"
 
 for program in $autostart; do
 	pidof -sx "$program" || "$program" &

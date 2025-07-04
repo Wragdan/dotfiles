@@ -12,7 +12,14 @@ super + e
 
 # browser
 super + w
-  librewolf
+  librewolf -P personal
+
+super + shift + w
+  librewolf -P Work
+
+# take screenshot of part of screen with selector
+super + Print
+  scrot -s - | xclip -selection clipboard -target image/png
 
 # audio and volume
 super + minus
