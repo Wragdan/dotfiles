@@ -1,8 +1,28 @@
 return {
-  'tpope/vim-fugitive',
-  config = function()
-    vim.keymap.set('n', '<leader>gs', vim.cmd.Git)
-    vim.keymap.set('n', '<leader>P', function() vim.cmd.Git("pull --rebase") end)
-    vim.keymap.set('n', '<leader>p', function() vim.cmd.Git('push') end)
-  end
+	"tpope/vim-fugitive",
+	event = "VeryLazy",
+	cmd = { "Git", "Gwrite", "Gdiffsplit", "Gvdiffsplit" },
+	keys = {
+		{
+			"<leader>gs",
+			function()
+				vim.cmd.Git()
+			end,
+			desc = "Open git status / fugitive",
+		},
+		{
+			"<leader>P",
+			function()
+				vim.cmd.Git("pull --rebase")
+			end,
+			desc = "Git pull --rebase",
+		},
+		{
+			"<leader>p",
+			function()
+				vim.cmd.Git("pull push")
+			end,
+			desc = "Git push",
+		},
+	},
 }

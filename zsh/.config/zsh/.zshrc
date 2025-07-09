@@ -60,3 +60,9 @@ PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
 ## To add completions for only the specified command, modify next line e.g. argc_scripts=( cargo git )
 #argc_scripts=( $(/bin/ls -p -1 "$ARGC_COMPLETIONS_ROOT/completions/macos" "$ARGC_COMPLETIONS_ROOT/completions" | sed -n 's/\.sh$//p') )
 #source <(argc --argc-completions zsh $argc_scripts)
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/opt/homebrew/share/google-cloud-sdk/path.zsh.inc' ]; then . '/opt/homebrew/share/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc' ]; then . '/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc'; fi

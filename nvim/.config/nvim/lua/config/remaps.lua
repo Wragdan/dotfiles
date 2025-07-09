@@ -1,25 +1,24 @@
 vim.g.mapleader = " "
 --vim.g.user_emmet_leader_key = ","
 
-
 -- Delete a word backwards
-vim.keymap.set('n', 'dw', 'vb"_d')
+vim.keymap.set("n", "dw", 'vb"_d')
 
 -- Select all
-vim.keymap.set('n', '<C-a>', 'gg<S-v>G')
+vim.keymap.set("n", "<C-a>", "gg<S-v>G")
 
 -- Rotate current file
-vim.keymap.set('n', '<leader><leader>', '<C-w>w')
+vim.keymap.set("n", "<leader><leader>", "<C-w>w")
 
 -- Split windows
-vim.keymap.set('n', 'ss', ':split<Return><C-w>w')
-vim.keymap.set('n', 'sv', ':vsplit<Return><C-w>w')
+vim.keymap.set("n", "ss", ":split<Return><C-w>w")
+vim.keymap.set("n", "sv", ":vsplit<Return><C-w>w")
 
 -- Resize windows
-vim.keymap.set('n', '<C-w><left>', '<C-w><')
-vim.keymap.set('n', '<C-w><right>', '<C-w>>')
-vim.keymap.set('n', '<C-w><up>', '<C-w>+')
-vim.keymap.set('n', '<C-w><down>', '<C-w>-')
+vim.keymap.set("n", "<C-w><left>", "<C-w><")
+vim.keymap.set("n", "<C-w><right>", "<C-w>>")
+vim.keymap.set("n", "<C-w><up>", "<C-w>+")
+vim.keymap.set("n", "<C-w><down>", "<C-w>-")
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
@@ -33,7 +32,7 @@ vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
 -- Paste over another text without loosing previous clipboard
-vim.keymap.set("x", "<leader>p", "\"_dP")
+vim.keymap.set("x", "<leader>p", '"_dP')
 
 -- Make current file executable
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
