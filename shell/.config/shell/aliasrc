@@ -35,7 +35,9 @@ function git_develop_branch() {
 alias e=$EDITOR
 alias zshrc="$EDITOR $ZSH/.zshrc" 
 
-alias ls="eza"
+alias l='eza -1A --group-directories-first --color=always --git-ignore'
+alias ls="l"
+alias la='l -l --time-style="+%Y-%m-%d %H:%M" --no-permissions --octal-permissions'
 # alias cd="z"
 alias src="source ~/.config/zsh/.zshrc"
 alias c="bat"
