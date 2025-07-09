@@ -1,0 +1,9 @@
+directory: ~/Music/Organized
+library: ~/data/musiclibrary.db
+musicbrainz:
+    server: http://localhost:5001
+    # Optional timeout settings
+    timeout: 30
+    retries: 3
+import:
+  copy: yes

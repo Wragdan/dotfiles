@@ -69,6 +69,7 @@ alias vim="$EDITOR"
 alias p="sudo pacman -S"
 alias py="sudo pacman -Sy"
 alias pas="sudo pacman -Ss"
+alias fzn='nvim $(fzf)'
 
 # Shortenings
 alias k="kubectl"
@@ -91,7 +92,7 @@ alias xbc='sudo xbps-remove -Ov'
 
 # Navigation
 cf() {
-	choice="$(find ~/.config -maxdepth 1 | fzf)"
+	choice="$(find ~/.config | fzf)"
 	[ $choice != "" ] && cd $choice && $EDITOR "$choice"
 ;}
 

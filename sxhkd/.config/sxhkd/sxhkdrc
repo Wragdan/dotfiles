@@ -17,6 +17,15 @@ super + w
 super + shift + w
   librewolf -P Work
 
+super + {comma,period}
+  mpc {prev,next}
+
+super + p
+  mpc toggle
+
+super + shift + m
+  st -e ncmpcpp
+
 # take screenshot of part of screen with selector
 super + Print
   scrot -s - | xclip -selection clipboard -target image/png
@@ -35,6 +44,9 @@ super + plus
   wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%+; kill -44 $(pidof dwmblocks)
 
 XF86AudioMute
+  wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)
+
+super + m
   wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)
 
 XF86AudioLowerVolume
