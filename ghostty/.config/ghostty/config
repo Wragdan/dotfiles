@@ -1,8 +1,17 @@
 # vim: ft=config
 
-theme = catppuccin-mocha
-font-family = MesloLGS NF Regular
+command = ~/.local/share/cargo/bin/nu --login --config=~/.config/nushell/config.nu --env-config=~/.config/nushell/env.nu
+shell-integration = "none"
+
+theme = Catppuccin Mocha
+#theme = Gruvbox Dark
+#font-family = MesloLGS NF Regular
+#font-family = ""
+font-family = JetBrains Mono
+#font-family = JetBrainsMono NFM
 font-size = 16
 
-window-decoration = true
-background-opacity = 0.98
+window-decoration = false
+window-padding-y = 8
+window-padding-x = 4
+#background-opacity = 0.98

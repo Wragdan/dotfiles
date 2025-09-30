@@ -31,7 +31,7 @@ export def git_develop_branch [] {
 
     let refs = [dev, devel, development]
     for ref in $refs {
-        let ref_exit_code = (do { git show-ref -q --verify $ref | complete | get exit_code })
+        let ref_exit_code = (do { git show-ref -q --verify $"refs/heads/($ref)" | complete | get exit_code })
 
         if $ref_exit_code == 0 {
             return ($ref | split words | last)
@@ -40,6 +40,9 @@ export def git_develop_branch [] {
     }
     return "develop"
 }
+
+def la [] { ls -la | select name type mode user group size | sort-by type }
+def glo [] { git log --pretty=%h»¦«%s»¦«%aN»¦«%aE»¦«%aD -n 25 | lines | split column "»¦«" commit subject name email date | upsert date {|d| $d.date | into datetime} | sort-by date }
 
 alias gcm = git checkout (git_main_branch)
 alias gcd = git checkout (git_develop_branch)
@@ -55,89 +58,21 @@ alias gph = git push origin HEAD
 alias gfa = git fetch --all --prune
 alias gst = git status
 
+alias k = kubectl
 alias e = editor
 alias nuconf = editor $nu.config-path
-alias darw = darwin-rebuild switch --flake ~/.dotfiles/nix-darwin/.config/nix-darwin --show-trace
-alias k = kubectl
-
-export def "nu-complete kube ns" [] {
-    kubectl get namespaces
-    | from ssv -a
-    | each {|x|
-        {value: $x.NAME, description: $"($x.AGE)\t($x.STATUS)"}
-    }
-}
-
-def "nu-complete kubectl get pods" [] { 
-    ^kubectl get pods --output json | from json | get items | get metadata.name
-}
-
-def kgp [
-    pod?: string@"nu-complete kubectl get pods"
-    --namespace (-n): string@"nu-complete kube ns"
-    --all (-a)
-] {
-    if ($pod | is-not-empty) {
-        kubectl get pods -n $namespace $pod
-    } else if $all {
-        kubectl get pods -a --wide
-    } else {
-        kubectl get pods -n $namespace -wide $pod
-    }
-}
-
-export def _git_log [v num] {
-    let stat = if $v {
-        _git_stat $num
-    } else { {} }
-    let r = (do -i {
-        git log -n $num --pretty=%h»¦«%s»¦«%aN»¦«%aE»¦«%aD
-        | lines
-        | split column "»¦«" sha message author email date
-        | each {|x| ($x| upsert date ($x.date | into datetime))}
-    })
-    if $v {
-        $r | merge $stat | reverse
-    } else {
-        $r | reverse
-    }
-}
 
 def "nu-complete git branches" [] {
-    git branch
-    | lines
-    | filter {|x| not ($x | str starts-with '*')}
-    | each {|x| $"($x|str trim)"}
+  git branch -a --sort=-creatordate --format '%(refname:short),%(subject)'
+    | from csv --noheaders
+    | rename value description
 }
 
 def "nu-complete git log" [] {
-    git log -n 32 --pretty=%h»¦«%s
+  git log -n 32 --pretty=%h»¦«%s
     | lines
     | split column "»¦«" value description
     | each {|x| $x | update value $"($x.value)"}
-}
-
-export def gl [
-    commit?: string@"nu-complete git log"
-    --verbose(-v)
-    --num(-n):int=32
-] {
-    if ($commit|is-empty) {
-        _git_log $verbose $num
-    } else {
-        git log --stat -p -n 1 $commit
-    }
-}
-
-export def glv [
-    commit?: string@"nu-complete git log"
-    --num(-n):int=32
-] {
-    if ($commit|is-empty) {
-        _git_log true $num
-    } else {
-        git log --stat -p -n 1 $commit
-    }
 }
 
 export def gco [branch: string@"nu-complete git branches"] {

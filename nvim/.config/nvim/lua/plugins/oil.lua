@@ -7,10 +7,12 @@ return {
 			},
 			keymaps = {
 				["<C-w>"] = { "actions.parent", mode = "n" },
+        ["<C-p>"] = "actions.preview",
+        ["<C-c>"] = { "actions.close", mode = "n" },
 			},
 		})
 
-		vim.keymap.set("n", "sf", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
+		vim.keymap.set("n", "sf", "<CMD>Oil --float<CR>")
 	end,
 	dependencies = { { "echasnovski/mini.icons", opts = {} } },
 	lazy = false,

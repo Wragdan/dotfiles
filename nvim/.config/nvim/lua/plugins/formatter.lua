@@ -8,6 +8,7 @@ return {
 				typescriptreact = { "biome-check", stop_after_first = true },
 				typescript = { "biome-check", stop_after_first = true },
         rust = { "rustfmt", lsp_format = "fallback" },
+        yaml = { "prettierd" },
 			},
 			--format_on_save = {
 			--  -- These options will be passed to conform.format()

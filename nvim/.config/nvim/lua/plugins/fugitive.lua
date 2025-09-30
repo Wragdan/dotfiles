@@ -20,7 +20,7 @@ return {
 		{
 			"<leader>p",
 			function()
-				vim.cmd.Git("pull push")
+				vim.cmd.Git("push --no-verify")
 			end,
 			desc = "Git push",
 		},

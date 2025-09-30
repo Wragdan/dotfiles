@@ -45,12 +45,6 @@ export GPG_TTY=$(tty)
 #    #. /opt/asdf-vm/asdf.sh
 #fi
 
-# Nix
-if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-  . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-fi
-# End Nix
-
 PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
 
 # argc-completions

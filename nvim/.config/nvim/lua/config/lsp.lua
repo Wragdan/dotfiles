@@ -14,6 +14,7 @@ vim.lsp.enable({
   'rust',
   'lua',
   'tailwind',
+  'docker',
 })
 
 -- LSP logging
