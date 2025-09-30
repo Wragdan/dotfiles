@@ -15,6 +15,7 @@ vim.lsp.enable({
   'lua',
   'tailwind',
   'docker',
+  'tofu',
 })
 
 -- LSP logging
