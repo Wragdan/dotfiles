@@ -1,27 +1,62 @@
+; eww config
+
+; ━━━━ windows ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╸
+
+(defwindow bar
+  :monitor 0
+  :windowtype "dock"
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "100%"
+                      :anchor "top center")
+  :wm-ignore false
+  (bar)
+)
+
+; ---- bars
+
+
 (defwidget bar []
   (centerbox :orientation "h"
     (workspaces)
-    (music)
     (sidestuff)
+    (battery)
   )
 )
 
+; ---- widgets
+
+(defpoll date_poll :interval "1m" "date +%d/%m")
+
+(defwidget date []
+  (box :class "date"
+    :space-evenly false
+    (label :class "icon" :text "󰃶")
+    (label :text date_poll)))
+
+(defwidget battery []
+  (box :class "battery"
+    :space-evenly false
+    (label :class "icon ${ EWW_BATTERY["BAT0"].capacity <= 10 ? 'critical' : '' }"
+           :text "${  EWW_BATTERY["BAT0"].capacity > 95 ? '󰁹' 
+                    : EWW_BATTERY["BAT0"].capacity > 90 ? '󰂂' 
+                    : EWW_BATTERY["BAT0"].capacity > 80 ? '󰂁' 
+                    : EWW_BATTERY["BAT0"].capacity > 70 ? '󰂀' 
+                    : EWW_BATTERY["BAT0"].capacity > 60 ? '󰁿' 
+                    : EWW_BATTERY["BAT0"].capacity > 50 ? '󰁾' 
+                    : EWW_BATTERY["BAT0"].capacity > 40 ? '󰁽' 
+                    : EWW_BATTERY["BAT0"].capacity > 30 ? '󰁼' 
+                    : EWW_BATTERY["BAT0"].capacity > 20 ? '󰁻' 
+                    : EWW_BATTERY["BAT0"].capacity > 10 ? '󰁺' 
+                    : '󰂃' }")
+    (label :text "${EWW_BATTERY["BAT0"].capacity}" :halign "center" :xalign 0.5 :justify "right")))
+
+
 (defwidget sidestuff []
   (box :class "sidestuff" :orientation "h" :space-evenly false :halign "end"
-    (metric :label "🔊"
-            :value volume
-            :onchange "amixer -D pulse sset Master {}%")
-    (metric :label ""
-            :value {EWW_RAM.used_mem_perc}
-            :onchange "")
-    (metric :label "💾"
-            :value {round((1 - (EWW_DISK["/"].free / EWW_DISK["/"].total)) * 100, 0)}
-            :onchange "")
-    time))
-
-
-(deflisten current_workspace :initial "1"
-  "sb-leftwm-ws")
+    (date)
+  )
+)
 
 (defwidget workspaces []
   (box :class "workspaces"
@@ -29,25 +64,15 @@
        :space-evenly true
        :halign "start"
        :spacing 10
-    (button :class { current_workspace == "1" ? "selected" : "" } :onclick "leftwm-command \"SendWorkspaceToTag 0 0\"" 1)
-    (button :class { current_workspace == "2" ? "selected" : "" } :onclick "leftwm-command \"SendWorkspaceToTag 0 1\"" 2)
-    (button :class { current_workspace == "3" ? "selected" : "" } :onclick "leftwm-command \"SendWorkspaceToTag 0 2\"" 3)
-    (button :class { current_workspace == "4" ? "selected" : "" } :onclick "leftwm-command \"SendWorkspaceToTag 0 3\"" 4)
-    (button :class { current_workspace == "5" ? "selected" : "" } :onclick "leftwm-command \"SendWorkspaceToTag 0 4\"" 5)
-    (button :class { current_workspace == "6" ? "selected" : "" } :onclick "leftwm-command \"SendWorkspaceToTag 0 5\"" 6)
-    (button :class { current_workspace == "7" ? "selected" : "" } :onclick "leftwm-command \"SendWorkspaceToTag 0 6\"" 7)
-    (button :class { current_workspace == "8" ? "selected" : "" } :onclick "leftwm-command \"SendWorkspaceToTag 0 7\"" 8)
-    (button :class { current_workspace == "9" ? "selected" : "" } :onclick "leftwm-command \"SendWorkspaceToTag 0 8\"" 9)
-    )
-)
-
-(defwidget music []
-  (box :class "music"
-       :orientation "h"
-       :space-evenly false
-       :halign "center"
-    {music != "" ? "🎵${music}" : ""}))
-
+    (button :onclick "dwmc view 0" 1)
+    (button :onclick "dwmc view 1" 2)
+    (button :onclick "dwmc view 2" 3)
+    (button :onclick "dwmc view 3" 4)
+    (button :onclick "dwmc view 4" 5)
+    (button :onclick "dwmc view 5" 6)
+    (button :onclick "dwmc view 6" 7)
+    (button :onclick "dwmc view 7" 8)
+    (button :onclick "dwmc view 8" 9)))
 
 (defwidget metric [label value onchange]
   (box :orientation "h"
@@ -60,25 +85,3 @@
            :value value
            :onchange onchange)))
 
-
-
-(deflisten music :initial ""
-  "playerctl --follow metadata --format '{{ artist }} - {{ title }}' || true")
-
-(defpoll volume :interval "1s"
-  "scripts/getvol")
-
-(defpoll time :interval "10s"
-  "date '+%H:%M %b %d, %Y'")
-
-(defwindow bar
-  :monitor 0
-  :windowtype "dock"
-  :geometry (geometry :x "0%"
-                      :y "0%"
-                      :width "100%"
-                      :height "20px"
-                      :anchor "top center")
-  :reserve (struts :side "top" :distance "40px")
-  (bar)
-)
