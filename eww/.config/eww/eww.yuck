@@ -10,34 +10,85 @@
                       :width "100%"
                       :anchor "top center")
   :wm-ignore false
-  (bar)
+  (barw)
 )
 
 ; ---- bars
 
 
-(defwidget bar []
-  (centerbox :orientation "h"
+(defwidget barw []
+  (centerbox :class "barw" :orientation "h"
     (workspaces)
+    (date)
     (sidestuff)
-    (battery)
   )
 )
 
 ; ---- widgets
 
-(defpoll date_poll :interval "1m" "date +%d/%m")
+(defpoll date_poll :interval "60m" "date +%d")
+(defpoll time_poll :interval "1s" "date +%r")
+(defpoll wlan_poll :interval "5s" "sb-wlan")
+(defpoll volume_poll :interval "500ms" "sb-volume")
 
 (defwidget date []
   (box :class "date"
     :space-evenly false
     (label :class "icon" :text "󰃶")
-    (label :text date_poll)))
+    (label :text "${date_poll} - ${time_poll}")
+  )
+)
+
+(defwidget wlan []
+  (box :class "sidestuff-item wlan"
+       :orientation "h"
+       :space-evenly false
+       :halign "end"
+    (label :class "icon ${ (wlan_poll * 1) == 0 ? 'red' : '' }"
+           :text "${  (wlan_poll * 1) == 0 ? '󰤭'
+                    : (wlan_poll * 1) > 80 ? '󰤨'
+                    : (wlan_poll * 1) > 60 ? '󰤥'
+                    : (wlan_poll * 1) > 20 ? '󰤟'
+                    : '󰤯'}")
+    (label :text "${wlan_poll}%")
+  )
+)
+
+(defwidget volume []
+  (box :class "sidestuff-item volume"
+       :orientation "h"
+       :space-evenly false
+       :halign "end"
+    (label :class "icon"
+           :text "${  (volume_poll * 1) <= 1 ? '󰝟'
+                    : (volume_poll * 1) > 60 ? '󰕾'
+                    : (volume_poll * 1) > 30 ? '󰖀'
+                    : '󰕿'}")
+    (label :text "${volume_poll}%")
+  )
+)
+
+(defwidget ram []
+  (box :class "sidestuff-item ram"
+       :orientation "h"
+       :space-evenly false
+       :halign "end"
+    (label :text "${round(EWW_RAM.used_mem / (1024 * 1024 * 1024), 1)}G")
+    (label :text " / ")
+    (label :text "${round(EWW_RAM.total_mem / (1024 * 1024 * 1024), 1)}G")
+  )
+)
+
+; "󰂎", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"
+; 󰉁
 
 (defwidget battery []
-  (box :class "battery"
-    :space-evenly false
-    (label :class "icon ${ EWW_BATTERY["BAT0"].capacity <= 10 ? 'critical' : '' }"
+  (box :class "sidestuff-item battery"
+       :orientation "h"
+       :space-evenly false
+       :halign "end"
+    (label :visible {EWW_BATTERY["BAT0"].status == "Charging"} :class "icon" :text "󰉁" )
+    (label :visible {EWW_BATTERY["BAT0"].status != "Charging"} :class "icon ${ EWW_BATTERY["BAT0"].capacity <= 20 ? 'critical' : '' }"
            :text "${  EWW_BATTERY["BAT0"].capacity > 95 ? '󰁹' 
                     : EWW_BATTERY["BAT0"].capacity > 90 ? '󰂂' 
                     : EWW_BATTERY["BAT0"].capacity > 80 ? '󰂁' 
@@ -49,19 +100,28 @@
                     : EWW_BATTERY["BAT0"].capacity > 20 ? '󰁻' 
                     : EWW_BATTERY["BAT0"].capacity > 10 ? '󰁺' 
                     : '󰂃' }")
-    (label :text "${EWW_BATTERY["BAT0"].capacity}" :halign "center" :xalign 0.5 :justify "right")))
+    (label :text "${EWW_BATTERY["BAT0"].capacity}%")
+  )
+)
 
 
 (defwidget sidestuff []
-  (box :class "sidestuff" :orientation "h" :space-evenly false :halign "end"
-    (date)
+  (box :orientation "h"
+       :halign "end"
+       :space-evenly false
+    (volume)
+    (battery)
+    (ram)
+    (wlan)
+    ;(battery)
+    ;(battery)
   )
 )
 
 (defwidget workspaces []
   (box :class "workspaces"
        :orientation "h"
-       :space-evenly true
+       :space-evenly false
        :halign "start"
        :spacing 10
     (button :onclick "dwmc view 0" 1)
@@ -72,16 +132,7 @@
     (button :onclick "dwmc view 5" 6)
     (button :onclick "dwmc view 6" 7)
     (button :onclick "dwmc view 7" 8)
-    (button :onclick "dwmc view 8" 9)))
-
-(defwidget metric [label value onchange]
-  (box :orientation "h"
-       :class "metric"
-       :space-evenly false
-    (box :class "label" label)
-    (scale :min 0
-           :max 101
-           :active {onchange != ""}
-           :value value
-           :onchange onchange)))
+    (button :onclick "dwmc view 8" 9)
+  )
+)
 
