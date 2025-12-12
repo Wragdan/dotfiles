@@ -30,6 +30,7 @@
 (defpoll time_poll :interval "1s" "date +%r")
 (defpoll wlan_poll :interval "5s" "sb-wlan")
 (defpoll volume_poll :interval "500ms" "sb-volume")
+(defpoll tag_poll :interval "60s" "xprop -root _NET_CURRENT_DESKTOP | awk '{ print $3 }'")
 
 (defwidget date []
   (box :class "widget date"
@@ -122,15 +123,15 @@
        :space-evenly false
        :halign "start"
        :spacing 10
-    (button :onclick "dwmc view 0" 1)
-    (button :onclick "dwmc view 1" 2)
-    (button :onclick "dwmc view 2" 3)
-    (button :onclick "dwmc view 3" 4)
-    (button :onclick "dwmc view 4" 5)
-    (button :onclick "dwmc view 5" 6)
-    (button :onclick "dwmc view 6" 7)
-    (button :onclick "dwmc view 7" 8)
-    (button :onclick "dwmc view 8" 9)
+    (button :class "${(tag_poll * 1) == 0 ? 'selected-workspace' : '' }" :onclick "dwmc viewex 0 && eww update tag_poll=0" 1)
+    (button :class "${(tag_poll * 1) == 1 ? 'selected-workspace' : '' }" :onclick "dwmc viewex 1 && eww update tag_poll=1" 2)
+    (button :class "${(tag_poll * 1) == 2 ? 'selected-workspace' : '' }" :onclick "dwmc viewex 2 && eww update tag_poll=2" 3)
+    (button :class "${(tag_poll * 1) == 3 ? 'selected-workspace' : '' }" :onclick "dwmc viewex 3 && eww update tag_poll=3" 4)
+    (button :class "${(tag_poll * 1) == 4 ? 'selected-workspace' : '' }" :onclick "dwmc viewex 4 && eww update tag_poll=4" 5)
+    (button :class "${(tag_poll * 1) == 5 ? 'selected-workspace' : '' }" :onclick "dwmc viewex 5 && eww update tag_poll=5" 6)
+    (button :class "${(tag_poll * 1) == 6 ? 'selected-workspace' : '' }" :onclick "dwmc viewex 6 && eww update tag_poll=6" 7)
+    (button :class "${(tag_poll * 1) == 7 ? 'selected-workspace' : '' }" :onclick "dwmc viewex 7 && eww update tag_poll=7" 8)
+    (button :class "${(tag_poll * 1) == 8 ? 'selected-workspace' : '' }" :onclick "dwmc viewex 8 && eww update tag_poll=8" 9)
   )
 )
 

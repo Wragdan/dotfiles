@@ -31,8 +31,10 @@ $crust: #11111b;
 }
 
 window {
-  font-family: "Noto Sans Serif CJK";
-  font-size: 14px;
+  font-family: "Caskaydia Cove Nerd Font Propo", "Caskaydia Nerd Font Mono Propo", sans-serif;
+  //font-family: "Terminus";
+  font-size: 13px;
+  font-weight: bold;
 }
 
 box {
@@ -48,7 +50,7 @@ box {
 .widget {
   background-color: $crust;
   padding: 4px 16px;
-  border-radius: 12px;
+  border-radius: 50px;
 }
 
 .icon {
@@ -65,4 +67,8 @@ box {
 .sidestuff-item {
   //margin: 0 12px;
   margin-left: 8px;
+}
+
+.selected-workspace {
+  color: $mauve;
 }
