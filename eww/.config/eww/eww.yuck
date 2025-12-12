@@ -32,7 +32,7 @@
 (defpoll volume_poll :interval "500ms" "sb-volume")
 
 (defwidget date []
-  (box :class "date"
+  (box :class "widget date"
     :space-evenly false
     (label :class "icon" :text "󰃶")
     (label :text "${date_poll} - ${time_poll}")
@@ -40,14 +40,14 @@
 )
 
 (defwidget wlan []
-  (box :class "sidestuff-item wlan"
+  (box :class "widget sidestuff-item wlan"
        :orientation "h"
        :space-evenly false
        :halign "end"
     (label :class "icon ${ (wlan_poll * 1) == 0 ? 'red' : '' }"
-           :text "${  (wlan_poll * 1) == 0 ? '󰤭'
-                    : (wlan_poll * 1) > 80 ? '󰤨'
+           :text "${  (wlan_poll * 1) > 80 ? '󰤨'
                     : (wlan_poll * 1) > 60 ? '󰤥'
+                    : (wlan_poll * 1) > 40 ? '󰤢'
                     : (wlan_poll * 1) > 20 ? '󰤟'
                     : '󰤯'}")
     (label :text "${wlan_poll}%")
@@ -55,39 +55,37 @@
 )
 
 (defwidget volume []
-  (box :class "sidestuff-item volume"
+  (box :class "widget sidestuff-item volume"
        :orientation "h"
        :space-evenly false
        :halign "end"
     (label :class "icon"
-           :text "${  (volume_poll * 1) <= 1 ? '󰝟'
-                    : (volume_poll * 1) > 60 ? '󰕾'
+           :text "${  (volume_poll * 1) > 60 ? '󰕾'
                     : (volume_poll * 1) > 30 ? '󰖀'
-                    : '󰕿'}")
-    (label :text "${volume_poll}%")
+                    : (volume_poll * 1) > 0 ? '󰕿'
+                    : '󰝟'}")
+    (label :visible {(volume_poll * 1) > 0} :text "${volume_poll}%")
   )
 )
 
 (defwidget ram []
-  (box :class "sidestuff-item ram"
+  (box :class "widget sidestuff-item ram"
        :orientation "h"
        :space-evenly false
        :halign "end"
+    (label :class "icon" :text "󰍛")
     (label :text "${round(EWW_RAM.used_mem / (1024 * 1024 * 1024), 1)}G")
     (label :text " / ")
     (label :text "${round(EWW_RAM.total_mem / (1024 * 1024 * 1024), 1)}G")
   )
 )
 
-; "󰂎", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"
-; 󰉁
-
 (defwidget battery []
-  (box :class "sidestuff-item battery"
+  (box :class "widget sidestuff-item battery"
        :orientation "h"
        :space-evenly false
        :halign "end"
-    (label :visible {EWW_BATTERY["BAT0"].status == "Charging"} :class "icon" :text "󰉁" )
+    (label :visible {EWW_BATTERY["BAT0"].status == "Charging"} :class "icon" :text "󰂄" )
     (label :visible {EWW_BATTERY["BAT0"].status != "Charging"} :class "icon ${ EWW_BATTERY["BAT0"].capacity <= 20 ? 'critical' : '' }"
            :text "${  EWW_BATTERY["BAT0"].capacity > 95 ? '󰁹' 
                     : EWW_BATTERY["BAT0"].capacity > 90 ? '󰂂' 
@@ -119,7 +117,7 @@
 )
 
 (defwidget workspaces []
-  (box :class "workspaces"
+  (box :class "widget workspaces"
        :orientation "h"
        :space-evenly false
        :halign "start"

@@ -30,20 +30,24 @@ $crust: #11111b;
   all: unset;
 }
 
-.barw {
-  //margin: 8px 0;
-  padding: 0 8px;
-  background-color: $base;
-}
-
 window {
-  font-family: "NotoSans Nerd Font", sans-serif;
-  //background-color: $base;
+  font-family: "Noto Sans Serif CJK";
 }
 
 box {
   padding: 0;
   margin: 0;
+}
+
+.barw {
+  margin: 16px 0;
+  padding: 0 4px;
+}
+
+.widget {
+  background-color: $crust;
+  padding: 4px 16px;
+  border-radius: 12px;
 }
 
 .icon {
@@ -59,6 +63,5 @@ box {
 
 .sidestuff-item {
   //margin: 0 12px;
-  padding: 0 8px;
-  //border-left: 2px solid white;
+  margin-left: 8px;
 }
