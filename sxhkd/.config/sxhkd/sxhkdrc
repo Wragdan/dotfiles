@@ -58,7 +58,7 @@ shift + XF86AudioRaiseVolume
   wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%+
 
 super + d
-  dmenu_run
+  rofi -show drun
 
 # dwm
 super + 1

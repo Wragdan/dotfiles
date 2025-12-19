@@ -9,6 +9,7 @@ feh --bg-scale /home/wragdan/.config/wallpapers/abstract.png
 xrdb ${XDG_CONFIG_HOME:-$HOME/.config}/x11/xresources & xrdbpid=$!	# Uncomment to use Xresources colors/settings on startup
 xset -dpms
 xset s noblank
+syncthing --no-browser &
 #xset s on
 #xset s 180 120
 #xss-lock -- slock -m "$(cowsay "Your screen is locked")" &

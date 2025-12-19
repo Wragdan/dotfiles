@@ -13,6 +13,17 @@
   (barw)
 )
 
+;(defwindow volume
+;  :monitor 0
+;  :windowtype "dock"
+;  :geometry (geometry :x "0%"
+;                      :y "0%"
+;                      :width "100%"
+;                      :anchor "top center")
+;  :wm-ignore false
+;  ()
+;)
+
 ; ---- bars
 
 
@@ -31,6 +42,8 @@
 (defpoll wlan_poll :interval "5s" "sb-wlan")
 (defpoll volume_poll :interval "500ms" "sb-volume")
 (defpoll tag_poll :interval "60s" "xprop -root _NET_CURRENT_DESKTOP | awk '{ print $3 }'")
+(defpoll title :interval "1s" "mpc --format \"%title%\" current")
+(defpoll artist :interval "1s" "mpc --format \"%artist%\" current")
 
 (defwidget date []
   (box :class "widget date"
@@ -45,13 +58,18 @@
        :orientation "h"
        :space-evenly false
        :halign "end"
-    (label :class "icon ${ (wlan_poll * 1) == 0 ? 'red' : '' }"
-           :text "${  (wlan_poll * 1) > 80 ? '󰤨'
-                    : (wlan_poll * 1) > 60 ? '󰤥'
-                    : (wlan_poll * 1) > 40 ? '󰤢'
-                    : (wlan_poll * 1) > 20 ? '󰤟'
-                    : '󰤯'}")
-    (label :text "${wlan_poll}%")
+    (button
+        :onclick "st -e nmtui"
+      (box
+        (label :class "icon ${ (wlan_poll * 1) == 0 ? 'red' : '' }"
+               :text "${  (wlan_poll * 1) > 80 ? '󰤨'
+                        : (wlan_poll * 1) > 60 ? '󰤥'
+                        : (wlan_poll * 1) > 40 ? '󰤢'
+                        : (wlan_poll * 1) > 20 ? '󰤟'
+                        : '󰤯'}")
+        (label :text "${wlan_poll}%")
+      )
+    )
   )
 )
 
@@ -103,11 +121,20 @@
   )
 )
 
+(defwidget nowplaying []
+  (box :class "widget sidestuff-item ram"
+       :orientation "h"
+       :space-evenly false
+       :halign "end"
+    (label :text "${artist} - ${title}")
+  )
+)
 
 (defwidget sidestuff []
   (box :orientation "h"
        :halign "end"
        :space-evenly false
+    (nowplaying)
     (volume)
     (battery)
     (ram)
