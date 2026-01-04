@@ -13,7 +13,8 @@ add_newline = true
 disabled = true
 
 [gcloud]
-disabled = true
+#disabled = true
+format = 'on [$project]($style) '
 
 [aws]
 disabled = true

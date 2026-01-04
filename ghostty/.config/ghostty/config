@@ -1,6 +1,7 @@
 # vim: ft=config
 
-command = ~/.local/share/cargo/bin/nu --login --config=~/.config/nushell/config.nu --env-config=~/.config/nushell/env.nu
+#command = ~/.local/share/cargo/bin/nu --login --config=~/.config/nushell/config.nu --env-config=~/.config/nushell/env.nu
+command = ~/.local/share/cargo/bin/nu --interactive --config=~/.config/nushell/config.nu --env-config=~/.config/nushell/env.nu
 shell-integration = "none"
 
 theme = Catppuccin Mocha

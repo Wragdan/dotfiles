@@ -5,10 +5,11 @@ return {
 			formatters_by_ft = {
 				--rust = { "rustfmt", lsp_format = "fallback" },
 				lua = { "stylua" },
-				typescriptreact = { "biome-check", stop_after_first = true },
-				typescript = { "biome-check", stop_after_first = true },
-        rust = { "rustfmt", lsp_format = "fallback" },
-        yaml = { "prettierd" },
+				typescriptreact = { "biome-check", "prettierd", stop_after_first = true },
+				typescript = { "biome-check", "prettierd", stop_after_first = true },
+				rust = { "rustfmt", lsp_format = "fallback" },
+				yaml = { "prettierd" },
+				json = { "biome-check", "prettierd", stop_after_first = true },
 			},
 			--format_on_save = {
 			--  -- These options will be passed to conform.format()

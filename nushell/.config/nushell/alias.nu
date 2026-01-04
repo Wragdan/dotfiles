@@ -1,3 +1,5 @@
+use std
+
 export def editor [file?: path] {
     # to change default editor in most of commands replace nvim here
     nvim ($file | default .)
@@ -40,9 +42,47 @@ export def git_develop_branch [] {
     }
     return "develop"
 }
+alias core-ls = ls
 
-def la [] { ls -la | select name type mode user group size | sort-by type }
-def glo [] { git log --pretty=%h»¦«%s»¦«%aN»¦«%aE»¦«%aD -n 25 | lines | split column "»¦«" commit subject name email date | upsert date {|d| $d.date | into datetime} | sort-by date }
+def ls [
+    dir?: path
+    --long (-l)
+    --all (-a)
+] {
+    let path = ($dir | default .)
+    
+    let result = if $all and $long {
+        core-ls -la $path
+    } else if $all {
+        core-ls -a $path
+    } else if $long {
+        core-ls -l $path
+    } else {
+        core-ls $path
+    }
+    
+    let colored = $result | each {|row|
+        let colored_name = match $row.type {
+            #"dir" => $"(ansi xblack;deepskyblue2;xpurplea;steelblue1b)($row.name)(ansi reset)"
+            "dir" => $"(ansi steelblue1b)($row.name)(ansi reset)"
+            "symlink" => $"(ansi cyan_bold)($row.name)(ansi reset)"
+            "exe" => $"(ansi green_bold)($row.name)(ansi reset)"
+            "file" => $"(ansi darkorange)($row.name)(ansi reset)"
+            _ => $row.name
+        }
+        $row | update name $colored_name
+    }
+    
+    if $long {
+        $colored | reject modified | sort-by type
+    } else {
+        $colored | reject modified | sort-by type
+    }
+}
+
+#def la [dir?: path] { ls -la ($dir | default .) | select name type mode user group size | sort-by type }
+def glo [] { git log --pretty=%h»¦«%s»¦«%aN»¦«%aE»¦«%aD -n 25 | lines | split column "»¦«" commit subject name email date | upsert date {|d| $d.date | into datetime} | sort-by date | select commit subject name date }
+def glod [] { git log --pretty=%h»¦«%s»¦«%aN»¦«%aE»¦«%aD -n 25 | lines | split column "»¦«" commit subject name email date | upsert date {|d| $d.date | into datetime} | sort-by date }
 
 alias gcm = git checkout (git_main_branch)
 alias gcd = git checkout (git_develop_branch)

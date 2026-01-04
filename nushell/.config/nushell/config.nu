@@ -34,15 +34,15 @@ $env.config = {
 zoxide init nushell | save -f ~/.cache/zoxide/zoxide.nu
 source ~/.cache/zoxide/zoxide.nu
 
-# starship
-mkdir ~/.cache/starship
-starship init nu | save -f ~/.cache/starship/init.nu
-use ~/.cache/starship/init.nu
-
 # fnm
 fnm env --json | from json | load-env
 $env.PATH = ($env.PATH | split row (char esep) | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 $env.PATH = ($env.PATH | uniq)
+
+# starship
+mkdir ~/.cache/starship
+starship init nu | save -f ~/.cache/starship/init.nu
+use ~/.cache/starship/init.nu
 
 # carapace
 source $"($nu.cache-dir)/carapace.nu"

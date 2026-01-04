@@ -9,7 +9,7 @@ return {
 		wt.setup()
 
     vim.keymap.set("n", "sw", Snacks.picker.worktrees)
-    vim.keymap.set("n", "<leader>wn", Snacks.picker.worktrees_new)
+    vim.keymap.set("n", "<leader>wa", Snacks.picker.worktrees_new)
     vim.keymap.set("n", "<leader>wr", Snacks.picker.worktrees_remove)
 	end,
 }

@@ -1,7 +1,7 @@
 return {
   cmd = { "rust-analyzer" },
   filetypes = { "rust" },
-  root_markers = { "cargo.toml", "cargo.lock" },
+  root_markers = { "Cargo.toml", "Cargo.lock" },
   settings = {
     ["rust-analyzer"] = {
       inlayHints = {
