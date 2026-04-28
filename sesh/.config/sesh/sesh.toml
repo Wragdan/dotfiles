@@ -1,0 +1,27 @@
+#:schema https://github.com/joshmedeski/sesh/raw/main/sesh.schema.json
+
+blacklist = ["scratch"]
+
+cache = false
+
+[default_session]
+startup_command = "eza --all --git --icons --color=always {}"
+preview_command = "eza --all --git --icons --color=always {}"
+
+[[session]]
+name = "cf-infra"
+path = "~/projects_work/infra-core"
+startup_command = "wt list"
+preview_command = "wt list -C ~/projects_work/infra-core"
+
+[[session]]
+name = "cf-repo"
+path = "~/projects_work/connect-financial"
+startup_command = "wt list"
+preview_command = "wt list -C ~/projects_work/connect-financial"
+
+[[session]]
+name = "dotf"
+path = "~/.dotfiles"
+startup_command = "nvim -c Oil"
+#preview_command = "wt list -C ~/projects_work/connect-financial"

@@ -17,6 +17,7 @@ $env.CARGO_HOME = $"($env.XDG_DATA_HOME)/cargo"
 $env.GOPATH = $"($env.XDG_DATA_HOME)/go"
 $env.GOMODCACHE = $"($env.XDG_CACHE_HOME)/go/mod"
 $env.SSH_AUTH_SOCK = "$(gpgconf --list-dirs agent-ssh-socket)"
+$env.LEDGER_FILE = "~/finance/main.journal"
 
 path add $"($env.HOME)/.cargo/bin"
 path add $"($env.HOME)/.local/share/cargo/bin"
@@ -24,6 +25,7 @@ path add $"($env.HOME)/.local/share/go/bin"
 path add $"($env.HOME)/.local/bin"
 path add $"($env.HOME)/go/bin"
 path add "/opt/homebrew/bin"
+path add "/opt/homebrew/share/google-cloud-sdk/bin"
 
 if ($os == "Darwin") {
   brew shellenv csh 

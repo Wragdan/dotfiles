@@ -1,0 +1,4 @@
+worktree-path = "{{ repo_path }}/{{ branch | sanitize }}"
+
+[switch.picker]
+pager = "delta --paging=never --width=$COLUMNS"

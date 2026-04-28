@@ -10,6 +10,7 @@ return {
 				rust = { "rustfmt", lsp_format = "fallback" },
 				yaml = { "prettierd" },
 				json = { "biome-check", "prettierd", stop_after_first = true },
+				go = { "gofmt", stop_after_first = true },
 			},
 			--format_on_save = {
 			--  -- These options will be passed to conform.format()

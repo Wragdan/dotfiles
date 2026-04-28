@@ -44,5 +44,9 @@ mkdir ~/.cache/starship
 starship init nu | save -f ~/.cache/starship/init.nu
 use ~/.cache/starship/init.nu
 
+# worktrun
+mkdir ($nu.data-dir | path join vendor/autoload)
+wt config shell init nu | save -f ($nu.data-dir | path join vendor/autoload/wt.nu)
+
 # carapace
 source $"($nu.cache-dir)/carapace.nu"
