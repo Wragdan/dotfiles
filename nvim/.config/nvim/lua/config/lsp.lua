@@ -20,8 +20,8 @@ vim.lsp.enable({
 	"tailwind",
 	"docker",
 	"tofu",
-  "go",
-  "toml",
+	"go",
+	"toml",
 })
 
 -- DIAGNOSTICS

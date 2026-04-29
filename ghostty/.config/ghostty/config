@@ -5,15 +5,15 @@ command = ~/.local/share/cargo/bin/nu --interactive --config=~/.config/nushell/c
 shell-integration = "none"
 
 theme = Catppuccin Mocha
-#theme = Gruvbox Dark
-#font-family = MesloLGS NF Regular
+font-family = MesloLGS NF Regular
 #font-family = ""
 #font-family = JetBrains Mono
 #font-family = Berkeley Mono Trial
-font-family = CommitMono-CustomMinus1
+#font-family = CommitMono-CustomMinus1
+#font-family = Iosevka Term SS14
 font-size = 18
-#adjust-cell-height = 2
-adjust-cell-height = 4
+adjust-cell-height = 1
+#adjust-cell-height = 4
 #adjust-cell-width = 1
 
 window-decoration = false

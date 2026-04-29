@@ -9,11 +9,12 @@ return {
 				typeHints = true,
 				parameterHints = true,
 			},
-			checkOnSave = {
+			check = {
 				command = "clippy",
 				extraArgs = { "--target-dir=./target/check" },
 				allFeatures = true,
 			},
+      checkOnSave = true,
 			diagnostics = {
 				enable = true,
 			},
