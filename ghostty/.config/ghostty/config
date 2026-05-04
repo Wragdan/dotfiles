@@ -5,7 +5,10 @@ command = ~/.local/share/cargo/bin/nu --interactive --config=~/.config/nushell/c
 shell-integration = "none"
 
 theme = Catppuccin Mocha
+theme = catppuccin-mocha
 font-family = MesloLGS NF Regular
+#theme = Gruvbox Dark
+#font-family = MesloLGS NF Regular
 #font-family = ""
 #font-family = JetBrains Mono
 #font-family = Berkeley Mono Trial

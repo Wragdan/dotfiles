@@ -30,9 +30,11 @@ $env.config = {
 }
 
 
+# configure autoload dir
+mkdir ($nu.data-dir | path join vendor/autoload)
+
 # zoxide
-zoxide init nushell | save -f ~/.cache/zoxide/zoxide.nu
-source ~/.cache/zoxide/zoxide.nu
+zoxide init nushell | save -f ($nu.data-dir | path join vendor/autoload/zoxide.nu)
 
 # fnm
 fnm env --json | from json | load-env
@@ -41,12 +43,10 @@ $env.PATH = ($env.PATH | uniq)
 
 # starship
 mkdir ~/.cache/starship
-starship init nu | save -f ~/.cache/starship/init.nu
-use ~/.cache/starship/init.nu
+starship init nu | save -f ($nu.data-dir | path join vendor/autoload/starship.nu)
 
-# worktrun
-mkdir ($nu.data-dir | path join vendor/autoload)
-wt config shell init nu | save -f ($nu.data-dir | path join vendor/autoload/wt.nu)
+# worktrunk
+#wt config shell init nu | save -f ($nu.data-dir | path join vendor/autoload/wt.nu)
 
 # carapace
-source $"($nu.cache-dir)/carapace.nu"
+#source $"($nu.cache-dir)/carapace.nu"

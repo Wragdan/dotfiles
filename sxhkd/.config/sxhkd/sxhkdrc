@@ -4,7 +4,7 @@ super + shift + r
 
 # file explorer
 super + e
-  st -e yazi
+  ghostty -e yazi
 
 # browser
 super + w
@@ -20,7 +20,7 @@ super + p
   mpc toggle
 
 super + shift + m
-  st -e ncmpcpp
+  ghostty -e ncmpcpp
 
 # take screenshot of part of screen with selector
 super + Print
