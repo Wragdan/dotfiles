@@ -137,6 +137,7 @@
   (add-hook 'elpaca-after-init-hook (lambda () (load custom-file 'noerror)))
 
   ;; Set font, same i use on different systems
+
   (set-face-attribute 'default nil
                       :font "MesloLGS NF Regular"
                       :height 140
@@ -245,12 +246,169 @@
                  cand))))
 
 (use-package magit
-  :ensure (:host github :repo "magit/magit")
-  :custom
-  (custom-set-faces
-     '(magit-diff-hunk-heading-highlight ((t (:background "#282c34"))))
-     '(magit-diff-context-highlight ((t (:background "#3e4452"))))))
+  :ensure (:host github :repo "magit/magit"))
 
+(use-package orderless
+  :ensure (:host github :repo "oantolin/orderless")
+  :defer t                                    ;; Load Orderless on demand.
+  :after vertico                              ;; Ensure Vertico is loaded before Orderless.
+  :init
+  (setq completion-styles '(orderless basic)  ;; Set the completion styles.
+        completion-category-defaults nil      ;; Clear default category settings.
+        completion-category-overrides '((file (styles partial-completion))))) ;; Customize file completion styles.
+
+(use-package marginalia
+  :ensure (:host github :repo "minad/marginalia")
+  :hook
+  (elpaca-after-init-hook . marginalia-mode))
+
+(use-package consult
+  :ensure (:host github :repo "minad/consult")
+  :defer t
+  :init
+  ;; Enhance register preview with thin lines and no mode line.
+  (advice-add #'register-preview :override #'consult-register-window)
+
+  ;; Use Consult for xref locations with a preview feature.
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref))
+
+;; (use-package company
+;;   :ensure (:host github :repo "company-mode/company-mode")
+;;   :hook
+;;   (prog-mode . global-company-mode)
+;;   (prog-mode . company-tng-mode)
+;;   (prog-mode . electric-pair-mode)
+;;   (org-src-mode . company-mode)
+
+;;   :config
+;;   (setq company-idle-delay 0
+;;         company-minimum-prefix-length 2))
+
+
+;; (use-package corfu
+;;   :ensure (:host github :repo "minad/corfu")
+;;   :defer t
+;;   :custom
+;;   (corfu-auto nil)                        ;; Only completes when hitting TAB
+;;   ;; (corfu-auto-delay 0)                ;; Delay before popup (enable if corfu-auto is t)
+;;   (corfu-auto-prefix 1)                  ;; Trigger completion after typing 1 character
+;;   (corfu-quit-no-match t)                ;; Quit popup if no match
+;;   (corfu-scroll-margin 5)                ;; Margin when scrolling completions
+;;   (corfu-max-width 50)                   ;; Maximum width of completion popup
+;;   (corfu-min-width 50)                   ;; Minimum width of completion popup
+;;   (corfu-popupinfo-delay 0.5)            ;; Delay before showing documentation popup
+;;   :config
+;;   (if ek-use-nerd-fonts
+;;     (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+;;   :init
+;;   (global-corfu-mode)
+;;   (corfu-popupinfo-mode t))
+
+
+;;; NERD-ICONS-CORFU
+;; Provides Nerd Icons to be used with CORFU.
+;; (use-package nerd-icons-corfu
+;;   :if ek-use-nerd-fonts
+;;   :ensure t
+;;   :straight t
+;;   :defer t
+;;   :after (:all corfu))
+
+(use-package lsp-mode
+  :ensure (:host github :repo "emacs-lsp/lsp-mode")
+  :defer t
+  :hook (;; Replace XXX-mode with concrete major mode (e.g. python-mode)
+         (lsp-mode . lsp-enable-which-key-integration)  ;; Integrate with Which Key
+         ((js-mode                                      ;; Enable LSP for JavaScript
+           tsx-ts-mode                                  ;; Enable LSP for TSX
+           typescript-ts-base-mode                      ;; Enable LSP for TypeScript
+           css-mode                                     ;; Enable LSP for CSS
+           go-ts-mode                                   ;; Enable LSP for Go
+           js-ts-mode                                   ;; Enable LSP for JavaScript (TS mode)
+           prisma-mode                                  ;; Enable LSP for Prisma
+           python-base-mode                             ;; Enable LSP for Python
+           ruby-base-mode                               ;; Enable LSP for Ruby
+           rust-ts-mode                                 ;; Enable LSP for Rust
+           web-mode) . lsp-deferred))                   ;; Enable LSP for Web (HTML)
+  :commands lsp
+  :custom
+  (lsp-keymap-prefix "C-c l")                           ;; Set the prefix for LSP commands.
+  (lsp-inlay-hint-enable nil)                           ;; Usage of inlay hints.
+  (lsp-completion-provider :none)                       ;; Disable the default completion provider.
+  (lsp-session-file (locate-user-emacs-file ".lsp-session")) ;; Specify session file location.
+  (lsp-log-io nil)                                      ;; Disable IO logging for speed.
+  (lsp-idle-delay 0.5)                                  ;; Set the delay for LSP to 0 (debouncing).
+  (lsp-keep-workspace-alive nil)                        ;; Disable keeping the workspace alive.
+  ;; Core settings
+  (lsp-enable-xref t)                                   ;; Enable cross-references.
+  (lsp-auto-configure t)                                ;; Automatically configure LSP.
+  (lsp-enable-links nil)                                ;; Disable links.
+  (lsp-eldoc-enable-hover t)                            ;; Enable ElDoc hover.
+  (lsp-enable-file-watchers nil)                        ;; Disable file watchers.
+  (lsp-enable-folding nil)                              ;; Disable folding.
+  (lsp-enable-imenu t)                                  ;; Enable Imenu support.
+  (lsp-enable-indentation nil)                          ;; Disable indentation.
+  (lsp-enable-on-type-formatting nil)                   ;; Disable on-type formatting.
+  (lsp-enable-suggest-server-download t)                ;; Enable server download suggestion.
+  (lsp-enable-symbol-highlighting t)                    ;; Enable symbol highlighting.
+  (lsp-enable-text-document-color t)                    ;; Enable text document color.
+  ;; Modeline settings
+  (lsp-modeline-code-actions-enable nil)                ;; Keep modeline clean.
+  (lsp-modeline-diagnostics-enable nil)                 ;; Use `flymake' instead.
+  (lsp-modeline-workspace-status-enable t)              ;; Display "LSP" in the modeline when enabled.
+  (lsp-signature-doc-lines 1)                           ;; Limit echo area to one line.
+  (lsp-eldoc-render-all t)                              ;; Render all ElDoc messages.
+  ;; Completion settings
+  (lsp-completion-enable t)                             ;; Enable completion.
+  (lsp-completion-enable-additional-text-edit t)        ;; Enable additional text edits for completions.
+  (lsp-enable-snippet nil)                              ;; Disable snippets
+  (lsp-completion-show-kind t)                          ;; Show kind in completions.
+  ;; Lens settings
+  (lsp-lens-enable t)                                   ;; Enable lens support.
+  ;; Headerline settings
+  (lsp-headerline-breadcrumb-enable-symbol-numbers t)   ;; Enable symbol numbers in the headerline.
+  (lsp-headerline-arrow "▶")                            ;; Set arrow for headerline.
+  (lsp-headerline-breadcrumb-enable-diagnostics nil)    ;; Disable diagnostics in headerline.
+  (lsp-headerline-breadcrumb-icons-enable nil)          ;; Disable icons in breadcrumb.
+  ;; Semantic settings
+  (lsp-semantic-tokens-enable nil))                     ;; Disable semantic tokens.
+
+
+
+;; The path to lsp-mode needs to be added to load-path as well as the
+;; path to the `clients' subdirectory.
+(add-to-list 'load-path (expand-file-name "lib/lsp-mode" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lib/lsp-mode/clients" user-emacs-directory))
+
+;; (use-package eldoc-box
+;;   :ensure (:host github :repo "casouri/eldoc-box")
+;;   :defer t)
+
+(use-package diff-hl
+  :defer (:host github :repo "dgutov/diff-hl")
+  :ensure t
+  :hook
+  (find-file . (lambda ()
+                 (global-diff-hl-mode)           ;; Enable Diff-HL mode for all files.
+                 (diff-hl-flydiff-mode)          ;; Automatically refresh diffs.
+                 (diff-hl-margin-mode)))         ;; Show diff indicators in the margin.
+  :custom
+  (diff-hl-side 'left)                           ;; Set the side for diff indicators.
+  (diff-hl-margin-symbols-alist '((insert . "┃") ;; Customize symbols for each change type.
+                                  (delete . "-")
+                                  (change . "┃")
+                                  (unknown . "┆")
+                                  (ignored . "i"))))
+
+(use-package rainbow-delimiters
+  :ensure (:host github :repo "Fanael/rainbow-delimiters")
+  :defer t
+  :hook
+  (prog-mode . rainbow-delimiters-mode))
+
+;; (add-to-list 'exec-path "/Users/user/.local/share/cargo/bin")
+;; (setenv "PATH" (concat "/Users/user/.local/share/cargo/bin" (getenv "PATH")))
 
 ;;(use-package evil
 ;;  :ensure t
