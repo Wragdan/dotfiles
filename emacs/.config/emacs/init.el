@@ -139,10 +139,10 @@
   ;; Set font, same i use on different systems
   (set-face-attribute 'default nil
                       :font "MesloLGS NF Regular"
-                      :height 180
+                      :height 140
                       :weight 'normal)
 
-   (when (eq system-type 'darwin)       ;; Check if the system is macOS.
+  (when (eq system-type 'darwin)       ;; Check if the system is macOS.
     (setq mac-command-modifier 'meta))  ;; Set the Command key to act as the Meta key.
    
   :init                        ;; Initialization settings that apply before the package is loaded.
@@ -243,6 +243,14 @@
                      (propertize "» " 'face '(:foreground "#80adf0" :weight bold))
                    "  ")
                  cand))))
+
+(use-package magit
+  :ensure (:host github :repo "magit/magit")
+  :custom
+  (custom-set-faces
+     '(magit-diff-hunk-heading-highlight ((t (:background "#282c34"))))
+     '(magit-diff-context-highlight ((t (:background "#3e4452"))))))
+
 
 ;;(use-package evil
 ;;  :ensure t
