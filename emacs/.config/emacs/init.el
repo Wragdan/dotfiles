@@ -193,7 +193,12 @@
   :ensure nil
   :custom
   (dired-listing-switches "-lah --group-directories-first")
-  (dired-dwim-target t))
+  (dired-dwim-target t)
+  :config
+  (when (eq system-type 'darwin)
+    (let ((gls (executable-find "gls")))                     ;; Use GNU ls on macOS if available.
+      (when gls
+        (setq insert-directory-program gls)))))
 
 (use-package org
   :ensure nil     ;; This is built-in, no need to fetch it.
