@@ -407,8 +407,11 @@
   :hook
   (prog-mode . rainbow-delimiters-mode))
 
-;; (add-to-list 'exec-path "/Users/user/.local/share/cargo/bin")
-;; (setenv "PATH" (concat "/Users/user/.local/share/cargo/bin" (getenv "PATH")))
+(use-package exec-path-from-shell
+  :ensure (:host github :repo "purcell/exec-path-from-shell")
+  :init
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 ;;(use-package evil
 ;;  :ensure t
