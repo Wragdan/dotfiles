@@ -3,17 +3,12 @@
 #command = ~/.local/share/cargo/bin/nu --login --config=~/.config/nushell/config.nu --env-config=~/.config/nushell/env.nu
 command = ~/.local/share/cargo/bin/nu --interactive --config=~/.config/nushell/config.nu --env-config=~/.config/nushell/env.nu
 shell-integration = "none"
+confirm-close-surface = false
 
 theme = Catppuccin Mocha
 theme = catppuccin-mocha
+font-family = ""
 font-family = MesloLGS NF Regular
-#theme = Gruvbox Dark
-#font-family = MesloLGS NF Regular
-#font-family = ""
-#font-family = JetBrains Mono
-#font-family = Berkeley Mono Trial
-#font-family = CommitMono-CustomMinus1
-#font-family = Iosevka Term SS14
 font-size = 18
 adjust-cell-height = 1
 #adjust-cell-height = 4

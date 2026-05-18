@@ -5,48 +5,45 @@ $env.config = {
     show_banner: false,
     edit_mode: vi,
     buffer_editor: "nvim",
-    #shell_integration: {
-    #  osc2: false  # Disables path abbreviation and tab/window title updates
-    #  osc7: false  # Disables directory communication with terminal
-    #  osc8: false  # Disables clickable links in ls output
-    #  osc133: false  # Disables prompt marking features
-    #  osc633: false  # Disables VS Code integration features
-    #  osc9_9: false  # Disables ConEmu integration
-    #  reset_application_mode: false  # Disables SSH compatibility mode
-    #},
     completions: {
       algorithm: "fuzzy" 
     }
-    #menus: [],
-    #keybindings: [
-    #    {
-    #        name: open_command_editor
-    #        modifier: control
-    #        keycode: char_e
-    #        mode: [emacs, vi_normal, vi_insert]
-    #        event: { send: openeditor }
-    #    }
-    #]
 }
 
+let autoload_path = ($nu.data-dir | path join vendor/autoload)
+let zoxide_path = ($autoload_path | path join zoxide.nu)
+let starship_path = ($autoload_path | path join starship.nu)
+let worktrunk_path = ($autoload_path | path join worktrunk.nu)
+let carapace_path = ($autoload_path | path join carapace.nu)
 
-# configure autoload dir
-mkdir ($nu.data-dir | path join vendor/autoload)
+if not ($autoload_path | path exists) {
+  mkdir $autoload_path
+}
 
-# zoxide
-zoxide init nushell | save -f ($nu.data-dir | path join vendor/autoload/zoxide.nu)
+if ((which zoxide | is-not-empty) and (not ($zoxide_path | path exists))) {
+  zoxide init nushell | save -f $zoxide_path
+}
 
-# fnm
-fnm env --json | from json | load-env
-$env.PATH = ($env.PATH | split row (char esep) | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
-$env.PATH = ($env.PATH | uniq)
+if ((which starship | is-not-empty) and (not ($starship_path | path exists))) {
+  starship init nu | save -f $starship_path
+}
 
-# starship
-mkdir ~/.cache/starship
-starship init nu | save -f ($nu.data-dir | path join vendor/autoload/starship.nu)
+if ((which wt | is-not-empty) and (not ($worktrunk_path | path exists))) {
+  wt config shell init nu | save -f $worktrunk_path
+}
 
-# worktrunk
-#wt config shell init nu | save -f ($nu.data-dir | path join vendor/autoload/wt.nu)
+if ((which carapace | is-not-empty) and (not ($carapace_path | path exists))) {
+  carapace _carapace nushell | save -f $carapace_path
+}
 
-# carapace
-#source $"($nu.cache-dir)/carapace.nu"
+if not (which fnm | is-empty) {
+    ^fnm env --json | from json | load-env
+
+    $env.PATH = $env.PATH | prepend ($env.FNM_MULTISHELL_PATH | path join (if $nu.os-info.name == 'windows' {''} else {'bin'}))
+    $env.config.hooks.env_change.PWD = (
+        $env.config.hooks.env_change.PWD? | append {
+            condition: {|| ['.nvmrc' '.node-version', 'package.json'] | any {|el| $el | path exists}}
+            code: {|| ^fnm use --install-if-missing --silent-if-unchanged}
+        }
+    )
+}
