@@ -1,6 +1,12 @@
-(setq gc-cons-threshold #x40000000)
 (setq read-process-output-max (* 1024 1024 4))
 (setq native-comp-jit-compilation nil)
+(setq gc-cons-threshold 10000000)
+(setq byte-compile-warnings '(not obsolete))
+(setq warning-suppress-log-types '((comp) (bytecomp)))
+(setq native-comp-async-report-warnings-errors 'silent)
+
+(setopt initial-major-mode 'fundamental-mode)  ; default mode for the *scratch* buffer
+(setopt display-time-default-load-average 1) ; this information is useless for most
 
 (setq package-enable-at-startup nil) ;; Disables the default package manager.
 
@@ -52,6 +58,11 @@
 ;; In Emacs, a package is a collection of Elisp code that extends the editor's functionality,
 ;; much like plugins do in Neovim. We need to import this package to add package archives.
 ;;(require 'package)
+
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
 
 ;;; EMACS
 ;;  This is biggest one. Keep going, plugins (oops, I mean packages) will be shorter :)
@@ -127,18 +138,18 @@
   (modify-coding-system-alist 'file "" 'utf-8)
 )
 
-(add-hook 'elpaca-after-init-hook
-            (lambda ()
-              (message "Emacs and Elpaca have fully loaded.")
-              (with-current-buffer (get-buffer-create "*scratch*")
-                ;; Optional: Clear the buffer first if you want to get rid of default text
-                (erase-buffer) 
-                (insert (format
-                         ";;    Welcome to Emacs!
-;;
-;;    Loading time : %s
-"
-                         (emacs-init-time))))))
+;;(add-hook 'elpaca-after-init-hook
+;;            (lambda ()
+;;              (message "Emacs and Elpaca have fully loaded.")
+;;              (with-current-buffer (get-buffer-create "*scratch*")
+;;                ;; Optional: Clear the buffer first if you want to get rid of default text
+;;                (erase-buffer) 
+;;                (insert (format
+;;                         ";;    Welcome to Emacs!
+;;;;
+;;;;    Loading time : %s
+;;"
+;;                         (emacs-init-time))))))
 
 (add-hook 'emacs-startup-hook
           (lambda ()
