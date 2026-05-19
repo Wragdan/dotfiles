@@ -1,260 +1,336 @@
-(setq read-process-output-max (* 1024 1024 4))
-(setq native-comp-jit-compilation nil)
-(setq gc-cons-threshold 10000000)
-(setq byte-compile-warnings '(not obsolete))
-(setq warning-suppress-log-types '((comp) (bytecomp)))
-(setq native-comp-async-report-warnings-errors 'silent)
+;;; -*- lexical-binding: t -*-
+;;;  ________                                                _______                 __                            __
+;;; /        |                                              /       \               /  |                          /  |
+;;; $$$$$$$$/ _____  ____   ______   _______  _______       $$$$$$$  | ______   ____$$ | ______   ______   _______$$ |   __
+;;; $$ |__   /     \/    \ /      \ /       |/       |      $$ |__$$ |/      \ /    $$ |/      \ /      \ /       $$ |  /  |
+;;; $$    |  $$$$$$ $$$$  |$$$$$$  /$$$$$$$//$$$$$$$/       $$    $$</$$$$$$  /$$$$$$$ /$$$$$$  /$$$$$$  /$$$$$$$/$$ |_/$$/
+;;; $$$$$/   $$ | $$ | $$ |/    $$ $$ |     $$      \       $$$$$$$  $$    $$ $$ |  $$ $$ |  $$/$$ |  $$ $$ |     $$   $$<
+;;; $$ |_____$$ | $$ | $$ /$$$$$$$ $$ \_____ $$$$$$  |      $$ |__$$ $$$$$$$$/$$ \__$$ $$ |     $$ \__$$ $$ \_____$$$$$$  \
+;;; $$       $$ | $$ | $$ $$    $$ $$       /     $$/       $$    $$/$$       $$    $$ $$ |     $$    $$/$$       $$ | $$  |
+;;; $$$$$$$$/$$/  $$/  $$/ $$$$$$$/ $$$$$$$/$$$$$$$/        $$$$$$$/  $$$$$$$/ $$$$$$$/$$/       $$$$$$/  $$$$$$$/$$/   $$/
+
+;;; Minimal init.el
+;;; Contents:
+;;;
+;;;  - Basic settings
+;;;  - Discovery aids
+;;;  - Minibuffer/completion/searching settings
+;;;  - Interface enhancements/defaults
+;;;  - Tab-bar configuration
+;;;  - Theme
+;;;  - Optional extras
+;;;  - Built-in customization framework
+
+;;; Guardrail
+
+(when (< emacs-major-version 31)
+  (error "Emacs Bedrock only works with Emacs 31 and newer; you have version %s" emacs-major-version))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Basic settings
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Package initialization
+;;
+;; Emacs ships with a bunch of Emacs Lisp package archives ("ELPAs")
+;; pre-configured. The MELPA archive is the biggest package archive
+;; out there. Most of the packages Bedrock uses in the extras/ folder
+;; come from the built-in ELPAs, but a few (notably Citar in
+;; extras/researcher.el) are on MELPA.
+;;
+;; These lines add MELPA to the list of ELPAs that Emacs will read.
+(with-eval-after-load 'package
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+
+;; If you want to turn off the welcome screen, uncomment this
+;(setopt inhibit-splash-screen t)
 
 (setopt initial-major-mode 'fundamental-mode)  ; default mode for the *scratch* buffer
-(setopt display-time-default-load-average 1) ; this information is useless for most
+(setopt display-time-default-load-average nil) ; this information is useless for most
 
-(setq package-enable-at-startup nil) ;; Disables the default package manager.
+;; Automatically reread from disk if the underlying file changes by
+;; using the OS file change notification interface rather than
+;; repeatedly polling to see if there are changes.
+;;
+;; Some systems don't do file notifications well; see
+;; https://todo.sr.ht/~ashton314/emacs-bedrock/11
+;; Set this to `nil' if Emacs is having trouble picking up changes.
+(setopt auto-revert-avoid-polling t)
+(setopt auto-revert-interval 5)
+(setopt auto-revert-check-vc-info t)
+(global-auto-revert-mode)
 
-;; Elpaca init
-(defvar elpaca-installer-version 0.12)
-(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
-(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-(defvar elpaca-sources-directory (expand-file-name "sources/" elpaca-directory))
-(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil :depth 1 :inherit ignore
-                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                              :build (:not elpaca-activate)))
-(let* ((repo  (expand-file-name "elpaca/" elpaca-sources-directory))
-       (build (expand-file-name "elpaca/" elpaca-builds-directory))
-       (order (cdr elpaca-order))
-       (default-directory repo))
-  (add-to-list 'load-path (if (file-exists-p build) build repo))
-  (unless (file-exists-p repo)
-    (make-directory repo t)
-    (when (<= emacs-major-version 28) (require 'subr-x))
-    (condition-case-unless-debug err
-        (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                  ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-                                                  ,@(when-let* ((depth (plist-get order :depth)))
-                                                      (list (format "--depth=%d" depth) "--no-single-branch"))
-                                                  ,(plist-get order :repo) ,repo))))
-                  ((zerop (call-process "git" nil buffer t "checkout"
-                                        (or (plist-get order :ref) "--"))))
-                  (emacs (concat invocation-directory invocation-name))
-                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                  ((require 'elpaca))
-                  ((elpaca-generate-autoloads "elpaca" repo)))
-            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-          (error "%s" (with-current-buffer buffer (buffer-string))))
-      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-  (unless (require 'elpaca-autoloads nil t)
-    (require 'elpaca)
-    (elpaca-generate-autoloads "elpaca" repo)
-    (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
-(add-hook 'after-init-hook #'elpaca-process-queues)
-(elpaca `(,@elpaca-order))
+;; Save history of minibuffer: future invocations will have
+;; recently-used selections sorted first
+(savehist-mode)
 
-;; Install use-package support
-(elpaca elpaca-use-package
-  ;; Enable use-package :ensure support for Elpaca.
-  (elpaca-use-package-mode))
+;; Save existing clipboard content to the kill ring---useful if you've
+;; copied something from an external program and then kill some text
+;; in Emacs shortly after. Also, deduplicate kill ring contents.
+(setopt save-interprogram-paste-before-kill t)
+(setopt kill-do-not-save-duplicates t)
 
-;; In Emacs, a package is a collection of Elisp code that extends the editor's functionality,
-;; much like plugins do in Neovim. We need to import this package to add package archives.
-;;(require 'package)
+;; Don't ping url-looking things when running find-file
+(setopt ffap-machine-p-known 'reject)
 
+;; Move through windows with Ctrl-<arrow keys>
+(windmove-default-keybindings 'control) ; You can use other modifiers here
+
+;; Rebalance windows automatically when splitting
+(setopt window-combination-resize t)
+
+;; Fix archaic defaults; justification: https://practicaltypography.com/one-space-between-sentences.html
+(setopt sentence-end-double-space nil)
+
+;; Make all confirmation prompts use `y' or `n'. Default is for some
+;; prompts to ask for a full `yes' or `no' when the operation is
+;; potentially dangerous. Commented out to keep the safer behavior.
+; (setopt use-short-answers t)
+
+;; Make right-click do something sensible
+(when (display-graphic-p)
+  (context-menu-mode))
+
+;; Don't litter file system with *~ backup files; put them all inside
+;; ~/.emacs.d/backup or wherever
+(defun bedrock--backup-file-name (fpath)
+  "Return a new file path of a given file path.
+If the new path's directories does not exist, create them."
+  (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
+         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path
+         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") )))
+    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
+    backupFilePath))
+(setopt make-backup-file-name-function 'bedrock--backup-file-name)
+
+;; The above creates nested directories in the backup folder. If
+;; instead you would like all backup files in a flat structure, albeit
+;; with their full paths concatenated into a filename, then you can
+;; use the following configuration:
+;; (Run `'M-x describe-variable RET backup-directory-alist RET' for more help)
+;;
+;; (let ((backup-dir (expand-file-name "emacs-backup/" user-emacs-directory)))
+;;   (setopt backup-directory-alist `(("." . ,backup-dir))))
+
+;; Basic speedups
+;;
+;; Emacs works really hard to be incredibly compatible out-of-the-box
+;; with a wide variety of languages. That comes at the cost of a
+;; little performance. These tell Emacs to assume left-to-right text
+;; in all buffers.
+;; Remove/comment if you read right-to-left languages (Arabic, Hebrew, etc.)
+(setq-default bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Discovery aids
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Show the help buffer after startup---makes it a little bit like nano
+(add-hook 'after-init-hook 'help-quick)
+
+;; which-key: shows a popup of available keybindings when typing a long key
+;; sequence (e.g. C-x ...)
 (use-package which-key
-  :ensure t
   :config
   (which-key-mode))
 
-;;; EMACS
-;;  This is biggest one. Keep going, plugins (oops, I mean packages) will be shorter :)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Minibuffer/completion/searching settings
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; For help, see: https://www.masteringemacs.org/article/understanding-minibuffer-completion
+
+(setopt enable-recursive-minibuffers t)                ; Use the minibuffer whilst in the minibuffer
+(setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
+(setopt completions-detailed t)                        ; Show annotations
+(setopt tab-always-indent 'complete)                   ; When I hit TAB, try to complete, otherwise, indent
+(setopt completion-styles '(basic initials substring)) ; Different styles to match input to candidates
+
+(setopt completion-auto-help 'always)                  ; Open completion always; `lazy' another option
+(setopt completions-max-height 20)                     ; This is an arbitrary value
+(setopt completions-format 'one-column)                ; Makes it easier to scroll
+(setopt completions-group t)
+
+;; Eager completion setup: show *Completions* buffer immediately
+(setopt completion-auto-select 'second-tab)            ; Much more eager
+(setopt completion-eager-display t)                    ; Show the completions buffer immediately
+(setopt completion-eager-update t)                     ; Update display as-you-type
+
+;; Uncomment to get automatic inline completion previews
+;(completion-preview-mode)
+
+
+(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
+
+;; For a fancier built-in completion option, try ido-mode,
+;; icomplete-vertical, or fido-mode. See also the file extras/base.el
+
+;(icomplete-vertical-mode)
+;(fido-vertical-mode)
+;(setopt icomplete-delay-completions-threshold 4000)
+
+
+;; isearch is Emacs's built-in searching system
+(use-package isearch
+  :ensure nil                           ; already installed
+  :bind
+  (:map isearch-mode-map
+        ("C-." . isearch-forward-thing-at-point)) ; Search for thing under cursor
+  :custom
+  (lazy-count-prefix-format "(%s/%s) ")
+  (isearch-lazy-count t)                 ; show match count
+  (isearch-allow-motion t)
+  (isearch-allow-scroll t)               ; lets you scroll without breaking search
+  (isearch-repeat-on-direction-change t) ; C-r immediately goes to previous match
+  ;; Uncomment to automatically wrap search to top when reaching
+  ;; bottom without pausing
+  ;; (isearch-wrap-pause 'no-ding)
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Interface enhancements/defaults
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Mode line information
+(setopt line-number-mode t)                        ; Show current line in modeline
+(setopt column-number-mode t)                      ; Show column as well
+(setopt mode-line-collapse-minor-modes nil)        ; nil default; set to `t' to hide minor modes
+
+(setopt x-underline-at-descent-line nil)           ; Prettier underlines
+(setopt switch-to-buffer-obey-display-actions t)   ; Make switching buffers more consistent
+
+(setopt show-trailing-whitespace nil)      ; By default, don't underline trailing spaces
+(setopt indicate-buffer-boundaries 'left)  ; Show buffer top and bottom in the margin
+
+;; Enable horizontal scrolling
+(setopt mouse-wheel-tilt-scroll t)
+(setopt mouse-wheel-flip-direction t)
+
+;; These are too personal to prescribe a default; uncomment and
+;; configure according to your tastes
+;(setopt indent-tabs-mode nil) ; Only use spaces to perform indentation
+;(setopt tab-width 4)
+
+;; Misc. UI tweaks
+(blink-cursor-mode -1)                                ; Steady cursor
+(pixel-scroll-precision-mode)                         ; Smooth scrolling
+
+;; Use common keystrokes by default
+(cua-mode)
+
+;; Makes it easier to repeat commands; `C-x o C-x o' becomes `C-x o o'
+;; See https://karthinks.com/software/it-bears-repeating/
+(repeat-mode)
+
+;; Display line numbers in programming mode
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(setopt display-line-numbers-width 3)           ; Set a minimum width
+
+;; Nice line wrapping when working with text
+(add-hook 'text-mode-hook 'visual-line-mode)
+
+(setopt global-hl-line-sticky-flag 'window) ; Every window gets own hl-line instance
+(global-hl-line-mode)
+
+;; Use this to enable the line highlight in only certain modes:
+;(let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
+;  (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
+
+;; Show matching delimiters
+(setopt show-paren-delay 0)
+(setopt show-paren-mode t)
+(setopt show-paren-style 'expression)   ; default is 'parenthesis and just does delimiters
+(setopt show-paren-context-when-offscreen 'overlay)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Tab-bar configuration
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Show the tab-bar as soon as tab-bar functions are invoked
+(setopt tab-bar-show 1)
+
+;; Add the time to the tab-bar, if visible
+(add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+(add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
+(setopt display-time-format "%a %F %T")
+(setopt display-time-interval 1)
+(display-time-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Theme
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (use-package emacs
-  :ensure nil
-  :custom                         ;; Set custom variables to configure Emacs behavior.
-  (auto-save-default nil)          ;; Disable automatic saving of buffers.
-  (column-number-mode t)           ;; Display the column number in the mode line.
-  (create-lockfiles nil)           ;; Prevent the creation of lock files when editing.
-  (delete-by-moving-to-trash t)    ;; Move deleted files to the trash instead of permanently deleting them.
-  (delete-selection-mode 1)        ;; Enable replacing selected text with typed text.
-  (display-line-numbers-type 'relative)   ;; Use relative line numbering in programming modes.
-  (global-auto-revert-non-file-buffers t) ;; Automatically refresh non-file buffers.
-  (history-length 25)              ;; Set the length of the command history.
-  (indent-tabs-mode nil)           ;; Disable the use of tabs for indentation (use spaces instead).
-  (inhibit-startup-message t)      ;; Disable the startup message when Emacs launches.
-  (initial-scratch-message "")     ;; Clear the initial message in the *scratch* buffer.
-  (ispell-dictionary "en_US")      ;; Set the default dictionary for spell checking.
-  (make-backup-files nil)          ;; Disable creation of backup files.
-  (pixel-scroll-precision-mode t)  ;; Enable precise pixel scrolling.
-  (pixel-scroll-precision-use-momentum nil) ;; Disable momentum scrolling for pixel precision.
-  (ring-bell-function 'ignore)     ;; Disable the audible bell.
-  (split-width-threshold 300)      ;; Prevent automatic window splitting if the window width exceeds 300 pixels.
-  (switch-to-buffer-obey-display-actions t) ;; Make buffer switching respect display actions.
-  (tab-always-indent 'complete)    ;; Make the TAB key complete text instead of just indenting.
-  (tab-width 4)                    ;; Set the tab width to 4 spaces.
-  (treesit-font-lock-level 4)      ;; Use advanced font locking for Treesit mode.
-  (truncate-lines t)               ;; Enable line truncation to avoid wrapping long lines.
-  (use-dialog-box nil)             ;; Disable dialog boxes in favor of minibuffer prompts.
-  (use-short-answers t)            ;; Use short answers in prompts for quicker responses (y instead of yes)
-  (warning-minimum-level :emergency) ;; Set the minimum level of warnings to display.
-  (x-select-enable-clipboard t)    ;; Enable clipboard
-
-  
-  :hook                                           ;; Add hooks to enable specific features in certain modes.
-  (prog-mode . display-line-numbers-mode)         ;; Enable line numbers in programming modes.
-
   :config
-  ;; Save manual customizations to a separate file instead of cluttering `init.el'.
-  ;; You can M-x customize, M-x customize-group, or M-x customize-themes, etc.
-  ;; The saves you do manually using the Emacs interface would overwrite this file.
-  ;; The following makes sure those customizations are in a separate file.
-  (setq custom-file (expand-file-name "customs.el" user-emacs-directory))
-  (add-hook 'elpaca-after-init-hook (lambda () (load custom-file 'noerror)))
+  (load-theme 'modus-vivendi))          ; for light theme, use modus-operandi
 
-  ;; Set font, same i use on different systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Optional extras
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (set-face-attribute 'default nil
-                      :font "MesloLGS NF Regular"
-                      :height 140
-                      :weight 'normal)
+;; Uncomment the (load-file …) lines or copy code from the extras/ elisp files
+;; as desired
 
-  (when (eq system-type 'darwin)       ;; Check if the system is macOS.
-    (setq mac-command-modifier 'meta))  ;; Set the Command key to act as the Meta key.
-   
-  :init                        ;; Initialization settings that apply before the package is loaded.
-  (tool-bar-mode 0)           ;; Disable the tool bar for a cleaner interface.
-  (menu-bar-mode 0)           ;; Disable the menu bar for a more streamlined look.
+;; UI/UX enhancements mostly focused on minibuffer and autocompletion interfaces
+;; These ones are *strongly* recommended!
+(load-file (expand-file-name "extras/base.el" user-emacs-directory))
 
-  (when scroll-bar-mode
-    (scroll-bar-mode 0))      ;; Disable the scroll bar if it is active.
+;; Packages for software development
+(load-file (expand-file-name "extras/dev.el" user-emacs-directory))
 
-  (global-hl-line-mode -1)     ;; Disable highlight of the current line
-  (global-auto-revert-mode 1)  ;; Enable global auto-revert mode to keep buffers up to date with their corresponding files.
-  (recentf-mode 1)             ;; Enable tracking of recently opened files.
-  (savehist-mode 1)            ;; Enable saving of command history.
-  (save-place-mode 1)          ;; Enable saving the place in files for easier return.
-  (winner-mode 1)              ;; Enable winner mode to easily undo window configuration changes.
-  (xterm-mouse-mode 1)         ;; Enable mouse support in terminal mode.
-  (file-name-shadow-mode 1)    ;; Enable shadowing of filenames for clarity.
+;; Vim-bindings in Emacs (evil-mode configuration)
+;(load-file (expand-file-name "extras/vim-like.el" user-emacs-directory))
 
-  ;; Set the default coding system for files to UTF-8.
-  (modify-coding-system-alist 'file "" 'utf-8)
-)
+;; Org-mode configuration
+;; WARNING: need to customize things inside the elisp file before use! See
+;; the file extras/org-intro.txt for help.
+;(load-file (expand-file-name "extras/org.el" user-emacs-directory))
 
-;;(add-hook 'elpaca-after-init-hook
-;;            (lambda ()
-;;              (message "Emacs and Elpaca have fully loaded.")
-;;              (with-current-buffer (get-buffer-create "*scratch*")
-;;                ;; Optional: Clear the buffer first if you want to get rid of default text
-;;                (erase-buffer) 
-;;                (insert (format
-;;                         ";;    Welcome to Emacs!
-;;;;
-;;;;    Loading time : %s
-;;"
-;;                         (emacs-init-time))))))
+;; Email configuration in Emacs
+;; WARNING: needs the `mu' program installed; see the elisp file for more
+;; details.
+;(load-file (expand-file-name "extras/email.el" user-emacs-directory))
 
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (global-text-scale-adjust 12)))
+;; Tools for academic researchers
+;(load-file (expand-file-name "extras/researcher.el" user-emacs-directory))
 
-(use-package catppuccin-theme
-  :ensure (:host github :repo "catppuccin/emacs")
-  :config
-  ;; Set your preferred flavor: 'latte, 'frappe, 'macchiato, or 'mocha
-  (setq catppuccin-flavor 'mocha) 
-  (load-theme 'catppuccin t))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Built-in customization framework
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package dired
-  :ensure nil
-  :custom
-  (dired-listing-switches "-lah --group-directories-first")
-  (dired-dwim-target t)
-  :config
-  (when (eq system-type 'darwin)
-    (let ((gls (executable-find "gls")))                     ;; Use GNU ls on macOS if available.
-      (when gls
-        (setq insert-directory-program gls)))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages '(citar-typst which-key)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
 
-(use-package org
-  :ensure nil     ;; This is built-in, no need to fetch it.
-  :defer t)       ;; Defer loading Org-mode until it's needed.
+ ;; This sets the default font for Emacs. Height is in 1/10 pt; configure as desired.
+ ;; The example font listed here, Iosevka Output, is available here: https://codeberg.org/ashton314/iosevka-output
+ ;; '(default ((t (:weight normal :height 130 :width expanded :family "Iosevka Output"))))
+ )
 
-(use-package compat
-  :ensure t)
-
-(use-package vertico
-  ;;:ensure (:host github :repo "minad/vertico" :version (lambda (_) "1.11"))
-  :ensure t
-  :hook
-  (elpaca-after-init-hook . vertico-mode)           ;; Enable vertico after Emacs has initialized.
-  :custom
-  (vertico-count 10)                    ;; Number of candidates to display in the completion list.
-  (vertico-resize nil)                  ;; Disable resizing of the vertico minibuffer.
-  (vertico-cycle nil)                   ;; Do not cycle through candidates when reaching the end of the list.
-  :config
-  ;; Customize the display of the current candidate in the completion list.
-  ;; This will prefix the current candidate with “» ” to make it stand out.
-  ;; Reference: https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow
-  (advice-add #'vertico--format-candidate :around
-              (lambda (orig cand prefix suffix index _start)
-                (setq cand (funcall orig cand prefix suffix index _start))
-                (concat
-                 (if (= vertico--index index)
-                     (propertize "» " 'face '(:foreground "#80adf0" :weight bold))
-                   "  ")
-                 cand))))
-
-(use-package rainbow-delimiters
-  :ensure (:host github :repo "Fanael/rainbow-delimiters")
-  :defer t
-  :hook
-  (prog-mode . rainbow-delimiters-mode))
-
-(use-package magit
-  :ensure (:host github :repo "magit/magit"))
-
-(use-package orderless
-  :ensure (:host github :repo "oantolin/orderless")
-  :defer t                                    ;; Load Orderless on demand.
-  :after vertico                              ;; Ensure Vertico is loaded before Orderless.
-  :init
-  (setq completion-styles '(orderless basic)  ;; Set the completion styles.
-        completion-category-defaults nil      ;; Clear default category settings.
-        completion-category-overrides '((file (styles partial-completion))))) ;; Customize file completion styles.
-
-(use-package marginalia
-  :ensure (:host github :repo "minad/marginalia")
-  :hook
-  (elpaca-after-init-hook . marginalia-mode))
-
-(use-package consult
-  :ensure (:host github :repo "minad/consult")
-  :defer t
-  :init
-  ;; Enhance register preview with thin lines and no mode line.
-  (advice-add #'register-preview :override #'consult-register-window)
-
-  ;; Use Consult for xref locations with a preview feature.
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref))
-
-(use-package exec-path-from-shell
-  :ensure (:host github :repo "purcell/exec-path-from-shell")
-  :init
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
-
-(use-package diff-hl
-  :defer (:host github :repo "dgutov/diff-hl")
-  :ensure t
-  :hook
-  (find-file . (lambda ()
-                 (global-diff-hl-mode)           ;; Enable Diff-HL mode for all files.
-                 (diff-hl-flydiff-mode)          ;; Automatically refresh diffs.
-                 (diff-hl-margin-mode)))         ;; Show diff indicators in the margin.
-  :custom
-  (diff-hl-side 'left)                           ;; Set the side for diff indicators.
-  (diff-hl-margin-symbols-alist '((insert . "┃") ;; Customize symbols for each change type.
-                                  (delete . "-")
-                                  (change . "┃")
-                                  (unknown . "┆")
-                                  (ignored . "i"))))
-
+;;(setq gc-cons-threshold (or bedrock--initial-gc-threshold 800000))
