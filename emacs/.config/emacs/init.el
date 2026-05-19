@@ -1,46 +1,7 @@
-;;; Code:
-
-;; Performance Hacks
-;; Emacs is an Elisp interpreter, and when running programs or packages,
-;; it can occasionally experience pauses due to garbage collection.
-;; By increasing the garbage collection threshold, we reduce these pauses
-;; during heavy operations, leading to smoother performance.
 (setq gc-cons-threshold #x40000000)
-
-;; Set the maximum output size for reading process output, allowing for larger data transfers.
 (setq read-process-output-max (* 1024 1024 4))
-
-;; Disable JIT native compilation during normal usage.
-;; All native compilation is handled upfront during installation
-;; (e.g., via `ek-reinstall.sh' or `ek/first-install').
-;; This prevents Emacs from compiling packages in the background
-;; while you're working, which can cause occasional stutters.
 (setq native-comp-jit-compilation nil)
-;; If you find Emacs slow for your usage, JIT native compilation increases
-;; performance dramatically.  Its default behavior, however, can be confusing
-;; for newcomers since it compiles things in the background unpredictably.
-;; To enable it, change the value above to `t'.  After that, every time you
-;; first use a feature, JIT will compile it in the background, so expect
-;; things to be sluggish for a bit.  Once everything is compiled, it's
-;; speed all the way.
 
-;; Do I really need a speedy startup?
-;; Well, this config launches Emacs in about ~0.3 seconds,
-;; which, in modern terms, is a miracle considering how fast it starts
-;; with external packages.
-;; It wasn’t until the recent introduction of tools for lazy loading
-;; that a startup time of less than 20 seconds was even possible.
-;; Other fast startup methods were introduced over time.
-;; You may have heard of people running Emacs as a server,
-;; where you start it once and open multiple clients instantly connected to that server.
-;; Some even run Emacs as a systemd or sysV service, starting when the machine boots.
-;; While this is a great way of using Emacs, we WON’T be doing that here.
-;; I think 0.3 seconds is fast enough to avoid issues that could arise from
-;; running Emacs as a server, such as 'What version of Node is my LSP using?'.
-;; Again, this setup configures Emacs much like how a Vimmer would configure Neovim.
-
-
-;; We will use Elpaca
 (setq package-enable-at-startup nil) ;; Disables the default package manager.
 
 ;; Elpaca init
@@ -208,21 +169,6 @@
 (use-package compat
   :ensure t)
 
-;;; VERTICO
-;; Vertico enhances the completion experience in Emacs by providing a
-;; vertical selection interface for both buffer and minibuffer completions.
-;; Unlike traditional minibuffer completion, which displays candidates
-;; in a horizontal format, Vertico presents candidates in a vertical list,
-;; making it easier to browse and select from multiple options.
-;;
-;; In buffer completion, `switch-to-buffer' allows you to select from open buffers.
-;; Vertico streamlines this process by displaying the buffer list in a way that
-;; improves visibility and accessibility. This is particularly useful when you
-;; have many buffers open, allowing you to quickly find the one you need.
-;;
-;; In minibuffer completion, such as when entering commands or file paths,
-;; Vertico helps by showing a dynamic list of potential completions, making
-;; it easier to choose the correct one without typing out the entire string.
 (use-package vertico
   ;;:ensure (:host github :repo "minad/vertico" :version (lambda (_) "1.11"))
   :ensure t
@@ -244,6 +190,12 @@
                      (propertize "» " 'face '(:foreground "#80adf0" :weight bold))
                    "  ")
                  cand))))
+
+(use-package rainbow-delimiters
+  :ensure (:host github :repo "Fanael/rainbow-delimiters")
+  :defer t
+  :hook
+  (prog-mode . rainbow-delimiters-mode))
 
 (use-package magit
   :ensure (:host github :repo "magit/magit"))
@@ -273,117 +225,11 @@
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref))
 
-;; (use-package company
-;;   :ensure (:host github :repo "company-mode/company-mode")
-;;   :hook
-;;   (prog-mode . global-company-mode)
-;;   (prog-mode . company-tng-mode)
-;;   (prog-mode . electric-pair-mode)
-;;   (org-src-mode . company-mode)
-
-;;   :config
-;;   (setq company-idle-delay 0
-;;         company-minimum-prefix-length 2))
-
-
-;; (use-package corfu
-;;   :ensure (:host github :repo "minad/corfu")
-;;   :defer t
-;;   :custom
-;;   (corfu-auto nil)                        ;; Only completes when hitting TAB
-;;   ;; (corfu-auto-delay 0)                ;; Delay before popup (enable if corfu-auto is t)
-;;   (corfu-auto-prefix 1)                  ;; Trigger completion after typing 1 character
-;;   (corfu-quit-no-match t)                ;; Quit popup if no match
-;;   (corfu-scroll-margin 5)                ;; Margin when scrolling completions
-;;   (corfu-max-width 50)                   ;; Maximum width of completion popup
-;;   (corfu-min-width 50)                   ;; Minimum width of completion popup
-;;   (corfu-popupinfo-delay 0.5)            ;; Delay before showing documentation popup
-;;   :config
-;;   (if ek-use-nerd-fonts
-;;     (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-;;   :init
-;;   (global-corfu-mode)
-;;   (corfu-popupinfo-mode t))
-
-
-;;; NERD-ICONS-CORFU
-;; Provides Nerd Icons to be used with CORFU.
-;; (use-package nerd-icons-corfu
-;;   :if ek-use-nerd-fonts
-;;   :ensure t
-;;   :straight t
-;;   :defer t
-;;   :after (:all corfu))
-
-(use-package lsp-mode
-  :ensure (:host github :repo "emacs-lsp/lsp-mode")
-  :defer t
-  :hook (;; Replace XXX-mode with concrete major mode (e.g. python-mode)
-         (lsp-mode . lsp-enable-which-key-integration)  ;; Integrate with Which Key
-         ((js-mode                                      ;; Enable LSP for JavaScript
-           tsx-ts-mode                                  ;; Enable LSP for TSX
-           typescript-ts-base-mode                      ;; Enable LSP for TypeScript
-           css-mode                                     ;; Enable LSP for CSS
-           go-ts-mode                                   ;; Enable LSP for Go
-           js-ts-mode                                   ;; Enable LSP for JavaScript (TS mode)
-           prisma-mode                                  ;; Enable LSP for Prisma
-           python-base-mode                             ;; Enable LSP for Python
-           ruby-base-mode                               ;; Enable LSP for Ruby
-           rust-ts-mode                                 ;; Enable LSP for Rust
-           web-mode) . lsp-deferred))                   ;; Enable LSP for Web (HTML)
-  :commands lsp
-  :custom
-  (lsp-keymap-prefix "C-c l")                           ;; Set the prefix for LSP commands.
-  (lsp-inlay-hint-enable nil)                           ;; Usage of inlay hints.
-  (lsp-completion-provider :none)                       ;; Disable the default completion provider.
-  (lsp-session-file (locate-user-emacs-file ".lsp-session")) ;; Specify session file location.
-  (lsp-log-io nil)                                      ;; Disable IO logging for speed.
-  (lsp-idle-delay 0.5)                                  ;; Set the delay for LSP to 0 (debouncing).
-  (lsp-keep-workspace-alive nil)                        ;; Disable keeping the workspace alive.
-  ;; Core settings
-  (lsp-enable-xref t)                                   ;; Enable cross-references.
-  (lsp-auto-configure t)                                ;; Automatically configure LSP.
-  (lsp-enable-links nil)                                ;; Disable links.
-  (lsp-eldoc-enable-hover t)                            ;; Enable ElDoc hover.
-  (lsp-enable-file-watchers nil)                        ;; Disable file watchers.
-  (lsp-enable-folding nil)                              ;; Disable folding.
-  (lsp-enable-imenu t)                                  ;; Enable Imenu support.
-  (lsp-enable-indentation nil)                          ;; Disable indentation.
-  (lsp-enable-on-type-formatting nil)                   ;; Disable on-type formatting.
-  (lsp-enable-suggest-server-download t)                ;; Enable server download suggestion.
-  (lsp-enable-symbol-highlighting t)                    ;; Enable symbol highlighting.
-  (lsp-enable-text-document-color t)                    ;; Enable text document color.
-  ;; Modeline settings
-  (lsp-modeline-code-actions-enable nil)                ;; Keep modeline clean.
-  (lsp-modeline-diagnostics-enable nil)                 ;; Use `flymake' instead.
-  (lsp-modeline-workspace-status-enable t)              ;; Display "LSP" in the modeline when enabled.
-  (lsp-signature-doc-lines 1)                           ;; Limit echo area to one line.
-  (lsp-eldoc-render-all t)                              ;; Render all ElDoc messages.
-  ;; Completion settings
-  (lsp-completion-enable t)                             ;; Enable completion.
-  (lsp-completion-enable-additional-text-edit t)        ;; Enable additional text edits for completions.
-  (lsp-enable-snippet nil)                              ;; Disable snippets
-  (lsp-completion-show-kind t)                          ;; Show kind in completions.
-  ;; Lens settings
-  (lsp-lens-enable t)                                   ;; Enable lens support.
-  ;; Headerline settings
-  (lsp-headerline-breadcrumb-enable-symbol-numbers t)   ;; Enable symbol numbers in the headerline.
-  (lsp-headerline-arrow "▶")                            ;; Set arrow for headerline.
-  (lsp-headerline-breadcrumb-enable-diagnostics nil)    ;; Disable diagnostics in headerline.
-  (lsp-headerline-breadcrumb-icons-enable nil)          ;; Disable icons in breadcrumb.
-  ;; Semantic settings
-  (lsp-semantic-tokens-enable nil))                     ;; Disable semantic tokens.
-
-
-
-;; The path to lsp-mode needs to be added to load-path as well as the
-;; path to the `clients' subdirectory.
-(add-to-list 'load-path (expand-file-name "lib/lsp-mode" user-emacs-directory))
-(add-to-list 'load-path (expand-file-name "lib/lsp-mode/clients" user-emacs-directory))
-
-;; (use-package eldoc-box
-;;   :ensure (:host github :repo "casouri/eldoc-box")
-;;   :defer t)
+(use-package exec-path-from-shell
+  :ensure (:host github :repo "purcell/exec-path-from-shell")
+  :init
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 (use-package diff-hl
   :defer (:host github :repo "dgutov/diff-hl")
@@ -401,158 +247,3 @@
                                   (unknown . "┆")
                                   (ignored . "i"))))
 
-(use-package rainbow-delimiters
-  :ensure (:host github :repo "Fanael/rainbow-delimiters")
-  :defer t
-  :hook
-  (prog-mode . rainbow-delimiters-mode))
-
-(use-package exec-path-from-shell
-  :ensure (:host github :repo "purcell/exec-path-from-shell")
-  :init
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
-
-;;(use-package evil
-;;  :ensure t
-;;  :defer t
-;;  :hook
-;;  (after-init . evil-mode)
-;;  :init
-;;  (setq evil-want-integration t)      ;; Integrate `evil' with other Emacs features (optional as it's true by default).
-;;  (setq evil-want-keybinding nil)     ;; Disable default keybinding to set custom ones.
-;;  (setq evil-want-C-u-scroll t)       ;; Makes C-u scroll
-;;  (setq evil-want-C-u-delete t)       ;; Makes C-u delete on insert mode
-;;  :config
-;;  (evil-set-undo-system 'undo-tree)   ;; Uses the undo-tree package as the default undo system
-;;
-;;  ;; Set the leader key to space for easier access to custom commands. (setq evil-want-leader t)
-;;  (setq evil-leader/in-all-states t)  ;; Make the leader key available in all states.
-;;  (setq evil-want-fine-undo t)        ;; Evil uses finer grain undoing steps
-;;
-;;  ;; Define the leader key as Space
-;;  (evil-set-leader 'normal (kbd "SPC"))
-;;  (evil-set-leader 'visual (kbd "SPC"))
-;;
-;;  ;; Keybindings for searching and finding files.
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> s f") 'consult-find)
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> s g") 'consult-grep)
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> s G") 'consult-git-grep)
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> s r") 'consult-ripgrep)
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> s h") 'consult-info)
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> /") 'consult-line)
-;;
-;;  ;;;; Flymake navigation
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> x x") 'consult-flymake);; Gives you something like `trouble.nvim'
-;;  ;;(evil-define-key 'normal 'global (kbd "] d") 'flymake-goto-next-error) ;; Go to next Flymake error
-;;  ;;(evil-define-key 'normal 'global (kbd "[ d") 'flymake-goto-prev-error) ;; Go to previous Flymake error
-;;
-;;  ;;;; Dired commands for file management
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> x d") 'dired)
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> x j") 'dired-jump)
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> x f") 'find-file)
-;;
-;;  ;;;; Diff-HL navigation for version control
-;;  ;;(evil-define-key 'normal 'global (kbd "] c") 'diff-hl-next-hunk) ;; Next diff hunk
-;;  ;;(evil-define-key 'normal 'global (kbd "[ c") 'diff-hl-previous-hunk) ;; Previous diff hunk
-;;
-;;  ;;;; NeoTree command for file exploration
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> e e") 'neotree-toggle)
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> e d") 'dired-jump)
-;;
-;;  ;;;; Magit keybindings for Git integration
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> g g") 'magit-status)      ;; Open Magit status
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> g l") 'magit-log-current) ;; Show current log
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> g d") 'magit-diff-buffer-file) ;; Show diff for the current file
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> g D") 'diff-hl-show-hunk) ;; Show diff for a hunk
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> g b") 'vc-annotate)       ;; Annotate buffer with version control info
-;;
-;;  ;;;; Buffer management keybindings
-;;  ;;(evil-define-key 'normal 'global (kbd "] b") 'switch-to-next-buffer) ;; Switch to next buffer
-;;  ;;(evil-define-key 'normal 'global (kbd "[ b") 'switch-to-prev-buffer) ;; Switch to previous buffer
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> b i") 'consult-buffer) ;; Open consult buffer list
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> b b") 'ibuffer) ;; Open Ibuffer
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> b d") 'kill-current-buffer) ;; Kill current buffer
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> b k") 'kill-current-buffer) ;; Kill current buffer
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> b x") 'kill-current-buffer) ;; Kill current buffer
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> b s") 'save-buffer) ;; Save buffer
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> b l") 'consult-buffer) ;; Consult buffer
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader>SPC") 'consult-buffer) ;; Consult buffer
-;;
-;;  ;;;; Project management keybindings
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> p b") 'consult-project-buffer) ;; Consult project buffer
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> p p") 'project-switch-project) ;; Switch project
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> p f") 'project-find-file) ;; Find file in project
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> p g") 'project-find-regexp) ;; Find regexp in project
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> p k") 'project-kill-buffers) ;; Kill project buffers
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> p D") 'project-dired) ;; Dired for project
-;;
-;;  ;;;; Yank from kill ring
-;;  ;;(evil-define-key 'normal 'global (kbd "P") 'consult-yank-from-kill-ring)
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> P") 'consult-yank-from-kill-ring)
-;;
-;;  ;;;; Embark actions for contextual commands
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> .") 'embark-act)
-;;
-;;  ;;;; Undo tree visualization
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> u") 'undo-tree-visualize)
-;;
-;;  ;;;; Help keybindings
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> h m") 'describe-mode) ;; Describe current mode
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> h f") 'describe-function) ;; Describe function
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> h v") 'describe-variable) ;; Describe variable
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> h k") 'describe-key) ;; Describe key
-;;
-;;  ;;;; Tab navigation
-;;  ;;(evil-define-key 'normal 'global (kbd "] t") 'tab-next) ;; Go to next tab
-;;  ;;(evil-define-key 'normal 'global (kbd "[ t") 'tab-previous) ;; Go to previous tab
-;;
-;;
-;;  ;;;; Custom example. Formatting with prettier tool.
-;;  ;;(evil-define-key 'normal 'global (kbd "<leader> m p")
-;;  ;;                 (lambda ()
-;;  ;;                   (interactive)
-;;  ;;                   (shell-command (concat "prettier --write " (shell-quote-argument (buffer-file-name))))
-;;  ;;                   (revert-buffer t t t)))
-;;
-;;  ;;;; LSP commands keybindings
-;;  ;;(evil-define-key 'normal lsp-mode-map
-;;  ;;                 ;; (kbd "gd") 'lsp-find-definition                ;; evil-collection already provides gd
-;;  ;;                 (kbd "gr") 'lsp-find-references                   ;; Finds LSP references
-;;  ;;                 (kbd "<leader> c a") 'lsp-execute-code-action     ;; Execute code actions
-;;  ;;                 (kbd "<leader> r n") 'lsp-rename                  ;; Rename symbol
-;;  ;;                 (kbd "gI") 'lsp-find-implementation               ;; Find implementation
-;;  ;;                 (kbd "<leader> l f") 'lsp-format-buffer)          ;; Format buffer via lsp
-;;
-;;
-;;  ;;(defun ek/lsp-describe-and-jump ()
-;;  ;;  "Show hover documentation and jump to *lsp-help* buffer."
-;;  ;;  (interactive)
-;;  ;;  (lsp-describe-thing-at-point)
-;;  ;;  (let ((help-buffer "*lsp-help*"))
-;;  ;;    (when (get-buffer help-buffer)
-;;  ;;      (switch-to-buffer-other-window help-buffer))))
-;;
-;;  ;;;; Emacs 31 finaly brings us support for 'floating windows' (a.k.a. "child frames")
-;;  ;;;; to terminal Emacs. If you're still using 30, docs will be shown in a buffer at the
-;;  ;;;; inferior part of your frame.
-;;  ;;(evil-define-key 'normal 'global (kbd "K")
-;;  ;;  (if (>= emacs-major-version 31)
-;;  ;;      #'eldoc-box-help-at-point
-;;  ;;      #'ek/lsp-describe-and-jump))
-;;
-;;  ;;;; Commenting functionality for single and multiple lines
-;;  ;;(evil-define-key 'normal 'global (kbd "gcc")
-;;  ;;                 (lambda ()
-;;  ;;                   (interactive)
-;;  ;;                   (if (not (use-region-p))
-;;  ;;                       (comment-or-uncomment-region (line-beginning-position) (line-end-position)))))
-;;
-;;  ;;(evil-define-key 'visual 'global (kbd "gc")
-;;  ;;                 (lambda ()
-;;  ;;                   (interactive)
-;;  ;;                   (if (use-region-p)
-;;  ;;                       (comment-or-uncomment-region (region-beginning) (region-end)))))
-;;
-;;  ;; Enable evil mode
-;;  (evil-mode 1))
