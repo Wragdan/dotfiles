@@ -15,6 +15,7 @@ let zoxide_path = ($autoload_path | path join zoxide.nu)
 let starship_path = ($autoload_path | path join starship.nu)
 let worktrunk_path = ($autoload_path | path join worktrunk.nu)
 let carapace_path = ($autoload_path | path join carapace.nu)
+let mise_path = ($autoload_path | path join mise.nu)
 
 if not ($autoload_path | path exists) {
   mkdir $autoload_path
@@ -22,6 +23,10 @@ if not ($autoload_path | path exists) {
 
 if ((which zoxide | is-not-empty) and (not ($zoxide_path | path exists))) {
   zoxide init nushell | save -f $zoxide_path
+}
+
+if ((which mise | is-not-empty) and (not ($mise_path | path exists))) {
+  mise activate nu | save -f $mise_path
 }
 
 if ((which starship | is-not-empty) and (not ($starship_path | path exists))) {
